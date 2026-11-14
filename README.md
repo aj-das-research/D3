@@ -22,7 +22,7 @@ ddd/                          core method
   coevolution_loop.py           per-agent hard-batch builder and update driver (Sec. 3.6)
   split_guard.py                fail-closed train/validation/test checks     (Sec. 4, App. F.1)
 agents/                       agent construction                             (Sec. 3.2, App. D.1-D.3)
-  agent_r/                      Agent-R: GRPO refinement (+ PPO baseline notebook)
+  agent_r/                      Agent-R: SFT, then GRPO refinement (+ PPO baseline notebook)
   agent_d/                      Agent-D: domain-adaptive training
   agent_c/                      Agent-C: cross-entropy + ECE loss, temperature scaling
 data/
@@ -52,14 +52,13 @@ scripts/download_qwen_model.py
 | Composite score `D(q)`, label-free `D_LF` (Sec. 3.4) | `ddd/disagreement_scorer.py` | Code and tests |
 | Hard-case buffer and sampling rules (Sec. 3.5, App. D.6) | `ddd/hard_case_buffer.py` | Code |
 | Diversity regulariser (Eq. 9) | `ddd/diversity_regularizer.py` | Code and tests (NumPy report + PyTorch loss) |
-| Agent-R GRPO, Agent-D, Agent-C training (Sec. 3.2) | `agents/` | Code |
+| Agent-R SFT and GRPO, Agent-D and Agent-C training (Sec. 3.2) | `agents/` | Code |
 | Static disagreement, Table 1 | `experiments/static_disagreement/` | Runners and saved outputs for the heterogeneous settings (see [Saved outputs](#saved-outputs)) |
 | Per-agent diagnostics, Figures 3-4, Table 11 | `analysis/error_structure.js`, `results/error_structure/` | Code and regenerated tables |
 | Significance tests (App. G.8) | `analysis/saved_output_analysis.py` | Code, applied to the saved static outputs |
 | Co-evolution batches (Sec. 3.6) | `ddd/coevolution_loop.py` | Batch builder and update driver; adapter-update commands are supplied by the user |
 
-Not included in this release: trained LoRA adapters, the Agent-R supervised
-fine-tuning stage that precedes GRPO, per-iteration co-evolution outputs
+Not included in this release: trained LoRA adapters, per-iteration co-evolution outputs
 (Table 2, Figure 2, Tables 8-9), the validated-target and downstream-utility
 evaluations (Tables 4-5), the self-consistency and control sweeps
 (App. G.5-G.7), the exploratory design-space study (App. H), and the
@@ -124,8 +123,10 @@ question IDs and, when a manifest SHA-256 is passed, on a hash mismatch.
 See [`agents/README.md`](agents/README.md) for inputs and outputs. In short:
 
 ```bash
-# Agent-R: GRPO refinement on top of an SFT adapter
-BASE_MODEL_PATH=/path/to/Qwen2.5-3B-Instruct SFT_ADAPTER_PATH=/path/to/agent_r_sft \
+# Agent-R: SFT on GSM8K, then GRPO refinement on top of the SFT adapter
+BASE_MODEL_PATH=/path/to/Qwen2.5-3B-Instruct OUTPUT_DIR=outputs/agent_r_sft \
+  python agents/agent_r/train_agent_r_sft.py
+BASE_MODEL_PATH=/path/to/Qwen2.5-3B-Instruct SFT_ADAPTER_PATH=outputs/agent_r_sft \
   python agents/agent_r/train_agent_r_grpo.py
 
 # Agent-D: domain-adaptive LM + SFT on MedQA and PubMedQA
