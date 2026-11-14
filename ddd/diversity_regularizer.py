@@ -15,8 +15,8 @@ Training use:
         min_js_divergence=0.30, # tau_JS in the paper
     )
 
-Note: the function defaults (weight=0.05, min_js_divergence=0.03) are
-development values. Pass the paper's values explicitly, as above.
+The defaults are the paper's values: lambda_div = 1.0 and tau_JS = 0.30
+(Appendix D.7).
 """
 
 import json
@@ -64,6 +64,11 @@ def js_divergence(p: Sequence[float], q: Sequence[float]) -> float:
     return 0.5 * kl_divergence(p_norm, midpoint) + 0.5 * kl_divergence(q_norm, midpoint)
 
 
+def js_divergence_normalized(p: Sequence[float], q: Sequence[float]) -> float:
+    """JS divergence divided by log 2, in [0, 1]."""
+    return js_divergence(p, q) / math.log(2.0)
+
+
 def entropy(p: Sequence[float]) -> float:
     probs = normalize_probs(p)
     return float(-sum(pi * math.log(pi + EPS) for pi in probs))
@@ -74,7 +79,7 @@ def pairwise_js(probs_by_agent: Dict[str, Sequence[float]]) -> Dict[str, float]:
     names = [name for name in AGENTS if name in probs_by_agent and probs_by_agent[name]]
     for i, left in enumerate(names):
         for right in names[i + 1 :]:
-            pairs[f"{left}{right}"] = js_divergence(probs_by_agent[left], probs_by_agent[right])
+            pairs[f"{left}{right}"] = js_divergence_normalized(probs_by_agent[left], probs_by_agent[right])
     return pairs
 
 
@@ -95,8 +100,8 @@ def extract_probs_from_record(record: Dict) -> Dict[str, List[float]]:
 
 @dataclass
 class DiversityRegularizer:
-    weight: float = 0.05
-    min_js_divergence: float = 0.03
+    weight: float = 1.0
+    min_js_divergence: float = 0.30
 
     def penalty(self, probs_by_agent: Dict[str, Sequence[float]]) -> float:
         mean_js = mean_pairwise_js(probs_by_agent)
@@ -140,7 +145,7 @@ def build_diversity_report(records: Iterable[Dict], regularizer: Optional[Divers
     }
 
 
-def write_diversity_report(input_jsonl: str, output_json: str, weight: float = 0.05, min_js_divergence: float = 0.03) -> Dict:
+def write_diversity_report(input_jsonl: str, output_json: str, weight: float = 1.0, min_js_divergence: float = 0.30) -> Dict:
     records = []
     with open(input_jsonl, "r", encoding="utf-8") as f:
         for line in f:
@@ -154,13 +159,24 @@ def write_diversity_report(input_jsonl: str, output_json: str, weight: float = 0
 
 def torch_diversity_loss(
     logits_by_agent: Dict[str, "object"],
-    weight: float = 0.05,
-    min_js_divergence: float = 0.03,
+    weight: float = 1.0,
+    min_js_divergence: float = 0.30,
     temperature: float = 1.0,
+    detach: Sequence[str] = (),
 ):
     """
-    Optional torch loss. Pass a dict like {"R": logits_r, "D": logits_d, "C": logits_c}.
-    Logits should share shape [..., num_choices]. Returns a scalar tensor.
+    Diversity hinge of paper Eq. 9:
+
+        weight * mean_q max(0, tau_JS - Jbar(q)),
+
+    where Jbar(q) is the mean pairwise Jensen-Shannon divergence between the
+    agents' option distributions, normalised by log 2 to lie in [0, 1] (the
+    same scale as the disagreement score's JS component and as the reported
+    mean JS of about 0.32 before co-evolution).
+
+    `logits_by_agent` maps agent names to tensors of shape [..., num_choices].
+    Agents listed in `detach` are treated as fixed references (no gradient),
+    which is how a single agent is updated against its peers.
     """
     try:
         import torch
@@ -168,27 +184,37 @@ def torch_diversity_loss(
     except ImportError as exc:
         raise ImportError("torch_diversity_loss requires torch") from exc
 
-    names = [name for name in AGENTS if name in logits_by_agent and logits_by_agent[name] is not None]
+    names = [name for name in logits_by_agent if logits_by_agent[name] is not None]
     if len(names) < 2:
         first = next(iter(logits_by_agent.values()))
         return torch.zeros((), dtype=first.dtype, device=first.device)
 
-    probs = {
-        name: F.softmax(logits_by_agent[name] / max(float(temperature), EPS), dim=-1)
-        for name in names
-    }
-    penalties = []
+    probs = {}
+    for name in names:
+        p = F.softmax(logits_by_agent[name].float() / max(float(temperature), EPS), dim=-1)
+        probs[name] = p.detach() if name in detach else p
+
+    pair_js = []
     for i, left in enumerate(names):
         for right in names[i + 1 :]:
-            p = probs[left]
-            q = probs[right]
-            midpoint = 0.5 * (p + q)
-            js = 0.5 * (
-                F.kl_div((p + EPS).log(), midpoint, reduction="none").sum(dim=-1)
-                + F.kl_div((q + EPS).log(), midpoint, reduction="none").sum(dim=-1)
-            )
-            penalties.append(torch.relu(torch.as_tensor(min_js_divergence, device=js.device) - js).mean())
-    return weight * torch.stack(penalties).mean()
+            p, q = probs[left], probs[right]
+            m = 0.5 * (p + q)
+            kl_pm = (p * ((p + EPS).log() - (m + EPS).log())).sum(dim=-1)
+            kl_qm = (q * ((q + EPS).log() - (m + EPS).log())).sum(dim=-1)
+            pair_js.append((0.5 * (kl_pm + kl_qm)) / math.log(2.0))
+    mean_js = torch.stack(pair_js, dim=0).mean(dim=0)
+    floor = torch.as_tensor(min_js_divergence, dtype=mean_js.dtype, device=mean_js.device)
+    return weight * torch.relu(floor - mean_js).mean()
+
+
+def torch_js_normalized(p, q):
+    """Normalised JS divergence between probability tensors (last dim)."""
+    import torch  # noqa: F401
+
+    m = 0.5 * (p + q)
+    kl_pm = (p * ((p + EPS).log() - (m + EPS).log())).sum(dim=-1)
+    kl_qm = (q * ((q + EPS).log() - (m + EPS).log())).sum(dim=-1)
+    return (0.5 * (kl_pm + kl_qm)) / math.log(2.0)
 
 
 if __name__ == "__main__":

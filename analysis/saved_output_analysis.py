@@ -232,6 +232,13 @@ def score_components(row: dict[str, Any]) -> dict[str, float] | None:
     }
 
 
+def _rel(path: Path) -> str:
+    try:
+        return str(Path(path).resolve().relative_to(REPO_ROOT))
+    except ValueError:
+        return str(path)
+
+
 def read_jsonl(path: Path) -> list[dict[str, Any]]:
     rows = []
     with path.open("r", encoding="utf-8") as handle:
@@ -381,7 +388,7 @@ def analyze_file(path: Path) -> tuple[pd.DataFrame, list[dict[str, Any]], list[d
         permutation_p = permutation_p_value(frame, score_column)
         correlation_rows.append(
             {
-                "file": str(path.relative_to(REPO_ROOT)),
+                "file": _rel(path),
                 "schema": "per_role" if "homogeneous" in path.name else "per_agent",
                 "score": score_column,
                 "n": count,
@@ -395,7 +402,7 @@ def analyze_file(path: Path) -> tuple[pd.DataFrame, list[dict[str, Any]], list[d
         )
         triage_rows.append(
             {
-                "file": str(path.relative_to(REPO_ROOT)),
+                "file": _rel(path),
                 "score": score_column,
                 "target": "top 20% by surface difficulty heuristic",
                 **triage_metrics(frame, score_column),
@@ -405,21 +412,36 @@ def analyze_file(path: Path) -> tuple[pd.DataFrame, list[dict[str, Any]], list[d
 
 
 def main() -> None:
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    input_paths = sorted(INPUT_DIR.glob("*.jsonl"))
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input_dir", default=str(INPUT_DIR),
+                        help="Folder of per-question JSONL files (static outputs or co-evolution predictions)")
+    parser.add_argument("--output_dir", default=str(OUTPUT_DIR))
+    args = parser.parse_args()
+    input_dir, output_dir = Path(args.input_dir).resolve(), Path(args.output_dir).resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
+    input_paths = sorted(input_dir.glob("*.jsonl"))
+
+    def rel(path: Path) -> str:
+        try:
+            return str(path.relative_to(REPO_ROOT))
+        except ValueError:
+            return str(path)
+
     all_correlations = []
     all_triage = []
     manifest = []
     for path in input_paths:
         frame, correlations, triage = analyze_file(path)
-        output_path = OUTPUT_DIR / f"{path.stem}_canonical_rescored.csv"
+        output_path = output_dir / f"{path.stem}_canonical_rescored.csv"
         frame.to_csv(output_path, index=False)
         all_correlations.extend(correlations)
         all_triage.extend(triage)
         manifest.append(
             {
-                "input": str(path.relative_to(REPO_ROOT)),
-                "output": str(output_path.relative_to(REPO_ROOT)),
+                "input": rel(path),
+                "output": rel(output_path),
                 "input_rows": len(read_jsonl(path)),
                 "scored_rows": len(frame),
             }
@@ -427,9 +449,9 @@ def main() -> None:
 
     correlation_frame = pd.DataFrame(all_correlations)
     triage_frame = pd.DataFrame(all_triage)
-    correlation_frame.to_csv(OUTPUT_DIR / "component_ablation.csv", index=False)
-    triage_frame.to_csv(OUTPUT_DIR / "surface_proxy_triage.csv", index=False)
-    (OUTPUT_DIR / "manifest.json").write_text(
+    correlation_frame.to_csv(output_dir / "component_ablation.csv", index=False)
+    triage_frame.to_csv(output_dir / "surface_proxy_triage.csv", index=False)
+    (output_dir / "manifest.json").write_text(
         json.dumps(manifest, indent=2), encoding="utf-8"
     )
 

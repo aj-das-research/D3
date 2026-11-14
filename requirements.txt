@@ -1,4 +1,5 @@
 # Analysis and tests
+matplotlib
 numpy
 pandas
 scipy

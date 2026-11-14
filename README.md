@@ -15,54 +15,70 @@ collapsing into one behaviour.
 ## Repository layout
 
 ```
+configs/paper.json            all hyperparameters from the paper              (App. D.9)
 ddd/                          core method
-  disagreement_scorer.py        composite score D(q) and label-free D_LF   (Sec. 3.4)
-  hard_case_buffer.py           rolling hard-case buffer, per-agent sampling (Sec. 3.5, App. D.6)
-  diversity_regularizer.py      hinge penalty on mean pairwise JS            (Sec. 3.6, Eq. 9)
-  coevolution_loop.py           per-agent hard-batch builder and update driver (Sec. 3.6)
-  split_guard.py                fail-closed train/validation/test checks     (Sec. 4, App. F.1)
-agents/                       agent construction                             (Sec. 3.2, App. D.1-D.3)
+  disagreement_scorer.py        composite score D(q) and label-free D_LF      (Sec. 3.4)
+  hard_case_buffer.py           rolling hard-case buffer, per-agent sampling  (Sec. 3.5, App. D.6)
+  diversity_regularizer.py      hinge on mean pairwise JS, NumPy and PyTorch  (Sec. 3.6, Eq. 9)
+  coevolution.py                closed co-evolution loop, backend-agnostic    (Sec. 3.6, App. D.6-D.8)
+  coevolution_loop.py           standalone batch builder from a predictions file
+  split_guard.py                fail-closed train/validation/test checks      (Sec. 4, App. F.1)
+  config.py                     loads configs/paper.json
+agents/                       agent construction                              (Sec. 3.2, App. D.1-D.3)
   agent_r/                      Agent-R: SFT, then GRPO refinement (+ PPO baseline notebook)
-  agent_d/                      Agent-D: domain-adaptive training
+  agent_d/                      Agent-D: domain-adaptive training (Qwen or Mistral base)
   agent_c/                      Agent-C: cross-entropy + ECE loss, temperature scaling
 data/
   prepare_mmlu_pro.py           MMLU-Pro hard subset and structural proxy s(q) (Sec. 4, App. C)
   create_split_manifest.py      2,416 / 300 / 300 category-stratified split
   mmlu_pro_hard_subset.{json,csv}
   splits/                       split manifest and balance summary
-experiments/static_disagreement/   pre-co-evolution (Iteration 0) runs        (Sec. 5-6.1, Table 1)
-  run_homogeneous.py            three role-prompted copies of one hosted model
-  run_heterogeneous.py          same-family R/D/C adapters on Qwen2.5-3B-Instruct
-  run_heterogeneous_multibackbone.py   Qwen R/C + Mistral-7B D
-  outputs/                      saved per-question outputs
+experiments/
+  static_disagreement/          pre-co-evolution (Iteration 0) runs and saved outputs (Table 1)
+  coevolution/                  GPU co-evolution runner and Hugging Face backend (Table 2, Fig. 2, Tables 8-9, App. G.7)
+  self_consistency/             reasoning-path sampler for the self-consistency baseline (Sec. 6.5, App. G.5)
+evaluation/
+  difficulty_targets.py         1 - pass rate and 2PL IRT difficulty from a model-pool response matrix (Table 4)
+  baselines.py                  verbalised confidence, single-model entropy, self-consistency, composite D_LF
+  compare_estimators.py         Spearman against validated targets, mean +/- sd over seeds (Table 4)
+  downstream.py                 evaluation triage, selective prediction, compute allocation (Table 5)
 analysis/
   saved_output_analysis.py      canonical rescoring, component ablation, bootstrap CIs, permutation tests
   error_structure.js            per-agent accuracy, ECE, error Jaccard, unique-correct counts
-results/                      tables regenerated from the saved outputs
+  plot_figures.py               Figures 2, 3 and 5
+results/                      tables and figures regenerated from the saved outputs
+scripts/                      seed, ablation and sweep drivers
 tests/                        unit tests (no model downloads)
-scripts/download_qwen_model.py
 ```
 
 ## What this release contains
 
-| Paper item | Where | Status |
-| --- | --- | --- |
-| Structural complexity proxy `s(q)`, hard subset (Sec. 4, App. C) | `data/` | Code and prepared data |
-| Split manifest and guards (App. F.1) | `data/splits/`, `ddd/split_guard.py` | Code and manifest |
-| Composite score `D(q)`, label-free `D_LF` (Sec. 3.4) | `ddd/disagreement_scorer.py` | Code and tests |
-| Hard-case buffer and sampling rules (Sec. 3.5, App. D.6) | `ddd/hard_case_buffer.py` | Code |
-| Diversity regulariser (Eq. 9) | `ddd/diversity_regularizer.py` | Code and tests (NumPy report + PyTorch loss) |
-| Agent-R SFT and GRPO, Agent-D and Agent-C training (Sec. 3.2) | `agents/` | Code |
-| Static disagreement, Table 1 | `experiments/static_disagreement/` | Runners and saved outputs for the heterogeneous settings (see [Saved outputs](#saved-outputs)) |
-| Per-agent diagnostics, Figures 3-4, Table 11 | `analysis/error_structure.js`, `results/error_structure/` | Code and regenerated tables |
-| Significance tests (App. G.8) | `analysis/saved_output_analysis.py` | Code, applied to the saved static outputs |
-| Co-evolution batches (Sec. 3.6) | `ddd/coevolution_loop.py` | Batch builder and update driver; adapter-update commands are supplied by the user |
+| Paper item | Where |
+| --- | --- |
+| Structural complexity proxy `s(q)`, hard subset (Sec. 4, App. C) | `data/` |
+| Split manifest and guards (App. F.1) | `data/splits/`, `ddd/split_guard.py` |
+| Composite score `D(q)`, label-free `D_LF` (Sec. 3.4) | `ddd/disagreement_scorer.py` |
+| Hard-case buffer and sampling rules (Sec. 3.5, App. D.6) | `ddd/coevolution.py`, `ddd/hard_case_buffer.py` |
+| Diversity regulariser (Eq. 9) | `ddd/diversity_regularizer.py` |
+| Agent training (Sec. 3.2, App. D.1-D.3) | `agents/` |
+| Static disagreement (Table 1) | `experiments/static_disagreement/`, with saved outputs |
+| Co-evolution, regulariser and agent ablations (Table 2, Fig. 2, Tables 8-9) | `experiments/coevolution/`, `scripts/` |
+| Component ablation and significance tests (Table 3, App. G.8) | `analysis/saved_output_analysis.py` (also reads co-evolution predictions) |
+| Validated targets and estimator comparison (Table 4) | `evaluation/` |
+| Downstream utility (Table 5, App. I) | `evaluation/downstream.py` |
+| Self-consistency sweep (App. G.5), buffer and threshold sweeps (App. G.7) | `experiments/self_consistency/`, `scripts/` |
+| Per-agent diagnostics (Figs. 3-4, Table 11) | `analysis/error_structure.js` |
+| Figures 2, 3 and 5 | `analysis/plot_figures.py` |
 
-Not included in this release: per-iteration co-evolution outputs
-(Table 2, Figure 2, Tables 8-9), the validated-target and downstream-utility
-evaluations (Tables 4-5), the self-consistency and control sweeps
-(App. G.5-G.7), the exploratory design-space study (App. H), and the
-figure-plotting code.
+Saved outputs are included only for the static runs (see
+[Saved outputs](#saved-outputs)). The co-evolution, Table 4-5 and sweep
+scripts implement the procedures specified in the paper; their run outputs
+are not part of this release, so these scripts have not been checked against
+the reported numbers. The exploratory design-space study (App. H) is not
+included. MUSE and EIP, the two external estimators in Table 4, are run with
+their official implementations:
+[LARK-NLP-Lab/MUSE](https://github.com/LARK-NLP-Lab/MUSE) and
+[Leozz04/EIP](https://github.com/Leozz04/EIP).
 
 ## Trained adapters
 
@@ -98,7 +114,7 @@ backend you use.
 ## Quick start without a GPU
 
 ```bash
-python -m pytest tests                       # 20 unit tests
+python -m pytest tests                       # unit tests, CPU only
 python analysis/saved_output_analysis.py     # writes results/saved_output_analysis/
 node analysis/error_structure.js             # writes results/error_structure/
 ```
@@ -180,38 +196,87 @@ confidences and, for the heterogeneous runners, full option distributions);
 the heterogeneous runners also write a run summary. The adaptive 80th-percentile hard-case threshold and the
 score ablations are applied afterwards by `analysis/saved_output_analysis.py`.
 
-## Co-evolution
+## Co-evolution (Table 2, Figure 2, Tables 8-9)
+
+`ddd/coevolution.py` implements the closed loop of Section 3.6. Each of 30
+iterations scores a fresh batch of training questions with the current
+adapters, adds questions at or above the batch's 80th percentile of `D(q)` to a
+500-question FIFO buffer, exposes the top 200, lets each agent draw its own
+slice with the Appendix D.6 rules, and takes 50 LoRA steps per agent on
+
+```
+CE(gold)  [+ lambda_ece * ECE loss for Agent-C]  +  lambda_div * mean_q max(0, tau_JS - Jbar(q))
+```
+
+with the other agents' distributions held fixed. All agents are then
+re-scored on the validation split; the test split is scored once at the end.
+`s(q)` is used only for the logged correlations.
 
 ```bash
-python ddd/coevolution_loop.py \
-  --predictions_jsonl /path/to/heterogeneous_train_predictions.jsonl \
-  --max_iterations 30 --buffer_size 500 --sample_size 200 \
-  --min_js_divergence 0.30 --diversity_weight 1.0 \
-  --agent_r_cmd "python my_update_r.py --hard_batch {batch} --iteration {iteration}" \
-  --agent_d_cmd "python my_update_d.py --hard_batch {batch} --iteration {iteration}" \
-  --agent_c_cmd "python my_update_c.py --hard_batch {batch} --iteration {iteration}"
+python experiments/coevolution/run_coevolution.py \
+  --base_model /path/to/Qwen2.5-3B-Instruct \
+  --agent_d_base_model /path/to/Mistral-7B-Instruct-v0.3 \
+  --agent_r /path/to/agent_r --agent_d /path/to/agent_d_mistral --agent_c /path/to/agent_c \
+  --seed 42 --output_dir outputs/coevolution/reg/seed42 --eval_test --save_adapters
 ```
 
-The driver keeps only training-split rows, rebuilds the hard-case buffer,
-writes one hard batch per agent under `iter_XX/`, and runs the update command
-for each agent (`--dry_run` builds the batches only). Every batch row carries
-the question's pairwise divergences and a `regularizer_hint` with the current
-penalty, and `ddd/diversity_regularizer.py` provides `torch_diversity_loss` for use inside
-an update script:
+Omit `--agent_d_base_model` for the same-family setting. Flags for the
+ablations: `--no_regularizer` (Table 8), `--agents R,C` (Table 9),
+`--buffer_size` and `--hard_percentile` (Appendix G.7). The drivers in
+`scripts/` run all three seeds with and without the regulariser, and the
+ablation sweeps. Each run writes `iterations.jsonl` (per-iteration accuracy,
+ECE, mean JS, `rho(D, s)` and `rho(D_LF, s)`), `val_predictions.jsonl`, and,
+with `--eval_test`, `test_metrics.json` and `test_predictions.jsonl`.
+Hyperparameters come from `configs/paper.json` (`tau_JS = 0.30`,
+`lambda_div = 1.0`, learning rate `1e-5`).
 
-```python
-from diversity_regularizer import torch_diversity_loss
+`ddd/coevolution_loop.py` is a lighter tool that builds per-agent hard
+batches from an existing predictions file and hands each batch to an update
+command of your own.
 
-loss = task_loss + torch_diversity_loss(
-    {"R": r_choice_logits, "D": d_choice_logits, "C": c_choice_logits},
-    weight=1.0, min_js_divergence=0.30,
-)
+## Validated targets and downstream utility (Tables 4-5)
+
+```bash
+# 1. Targets from a model-pool response matrix (question_id + one 0/1 column per model)
+python evaluation/difficulty_targets.py --responses pool_responses.csv --out results/targets.csv
+
+# 2. Per-question scores for each method
+python evaluation/baselines.py --method composite --input outputs/coevolution/reg/seed42/test_predictions.jsonl \
+  --seed 42 --out results/scores/dlf_coevolved.csv
+python evaluation/baselines.py --method entropy --input single_model.jsonl --out results/scores/entropy.csv
+
+# 3. Table 4
+python evaluation/compare_estimators.py --targets results/targets.csv \
+  --estimator "D_LF co-evolved=results/scores/dlf_coevolved.csv" \
+  --estimator "Single-model entropy=results/scores/entropy.csv" --out results/table4.csv
+
+# 4. Table 5
+python evaluation/downstream.py --score "D_LF co-evolved=results/scores/dlf_coevolved.csv" \
+  --score "Random=random" --pool pool_responses.csv --committee committee_correct.csv \
+  --deliberation deliberation.csv --out results/table5.csv
 ```
 
-The command-line and function defaults for the regulariser (`0.05` and
-`0.03`) are development values; the paper uses `lambda_div = 1.0` and
-`tau_JS = 0.30`, passed explicitly above. Adapter-update scripts and
-re-scoring between iterations are not part of this release.
+The input formats are documented at the top of each script. The 2PL fit is a
+joint maximum-a-posteriori estimate with weak Gaussian priors.
+
+## Self-consistency sweep (Appendix G.5)
+
+```bash
+MODEL=/path/to/Qwen2.5-3B-Instruct scripts/run_self_consistency_sweep.sh
+```
+
+This samples 100 reasoning paths per test question and scores budgets of 5,
+10, 20, 40 and 100 with the same composite, treating each third of the
+samples as one pseudo-agent.
+
+## Figures
+
+```bash
+python analysis/plot_figures.py --coevolution_dir outputs/coevolution
+```
+
+Figures 3 and 5 are drawn from the saved static outputs; Figure 2 needs
+co-evolution runs.
 
 ## Saved outputs
 

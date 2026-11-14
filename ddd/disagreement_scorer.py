@@ -118,7 +118,11 @@ class DisagreementScorer:
     def _confidence_variance(self, confidences: List[float]) -> float:
         clipped = np.clip(np.asarray(confidences, dtype=float), 0.0, 1.0)
         var = float(np.var(clipped))
-        max_var = 1.0 / 3.0
+        n = len(clipped)
+        # Three agents: the paper's 1/3 normaliser (Eq. 5). Other committee
+        # sizes (agent-removal ablation): the largest population variance of
+        # n values in [0, 1].
+        max_var = 1.0 / 3.0 if n == 3 else (n // 2) * (n - n // 2) / float(n * n)
         return float(np.clip(var / max_var, 0.0, 1.0))
 
     def _option_labels(self, outputs: List[AgentOutput]) -> List[str]:
@@ -203,8 +207,8 @@ class DisagreementScorer:
         outputs: List[AgentOutput],
         correct_answer: Optional[str] = None,
     ) -> DisagreementResult:
-        if len(outputs) != 3:
-            raise ValueError("Need exactly 3 agent outputs.")
+        if len(outputs) < 2:
+            raise ValueError("Need at least 2 agent outputs.")
 
         answers = [o.answer for o in outputs]
         confidences = [o.confidence for o in outputs]
