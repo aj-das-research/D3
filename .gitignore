@@ -52,3 +52,6 @@ checkpoints/
 # Documents
 *.docx
 *.pdf
+
+# Local scoring of saved outputs against the public pool
+/results/validated_targets/

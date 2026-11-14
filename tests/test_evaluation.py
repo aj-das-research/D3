@@ -101,3 +101,27 @@ class DownstreamTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PoolMatrixTests(unittest.TestCase):
+    def test_reads_archives_and_drops_low_coverage(self):
+        import json as _json
+        import tempfile
+        import zipfile
+        from build_pool_matrix import build_matrix, model_name
+
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            recs = [{"question_id": "1", "answer": "A", "pred": "A"},
+                    {"question_id": "2", "answer": "B", "pred": None},
+                    {"question_id": "3", "answer": "C", "pred": "D"}]
+            with zipfile.ZipFile(tmp / "model_outputs_good_5shots.zip", "w") as z:
+                z.writestr("eval_results/math_result.json", _json.dumps(recs))
+                z.writestr("eval_results/summary.json", _json.dumps({"x": 1}))
+                z.writestr("__MACOSX/eval_results/._math_result.json", "junk")
+            with zipfile.ZipFile(tmp / "model_outputs_sparse_5shots.json.zip", "w") as z:
+                z.writestr("m.json", _json.dumps(recs[:1]))
+            df = build_matrix(tmp, ["1", "2", "3"], min_coverage=0.9)
+            self.assertEqual(list(df.columns), ["question_id", "good_5shots"])
+            self.assertEqual(df["good_5shots"].tolist(), [1, 0, 0])
+            self.assertEqual(model_name(Path("model_outputs_x_5shots.json.zip")), "x_5shots")

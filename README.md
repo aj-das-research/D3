@@ -33,11 +33,14 @@ data/
   create_split_manifest.py      2,416 / 300 / 300 category-stratified split
   mmlu_pro_hard_subset.{json,csv}
   splits/                       split manifest and balance summary
+  pool/                         public model-pool response matrix and validated difficulty targets (Table 4)
 experiments/
   static_disagreement/          pre-co-evolution (Iteration 0) runs and saved outputs (Table 1)
   coevolution/                  GPU co-evolution runner and Hugging Face backend (Table 2, Fig. 2, Tables 8-9, App. G.7)
   self_consistency/             reasoning-path sampler for the self-consistency baseline (Sec. 6.5, App. G.5)
 evaluation/
+  build_pool_matrix.py          response matrix from public MMLU-Pro model predictions
+  static_validation.py          saved static outputs against the validated targets
   difficulty_targets.py         1 - pass rate and 2PL IRT difficulty from a model-pool response matrix (Table 4)
   baselines.py                  verbalised confidence, single-model entropy, self-consistency, composite D_LF
   compare_estimators.py         Spearman against validated targets, mean +/- sd over seeds (Table 4)
@@ -236,8 +239,29 @@ command of your own.
 
 ## Validated targets and downstream utility (Tables 4-5)
 
+`data/pool/mmlu_pro_hard_pool_responses.csv` records, for each of the 3,016
+hard-subset questions, whether each of 47 public models answered it
+correctly. It is built from the per-question predictions that the MMLU-Pro
+authors publish in the `eval_results/` folder of
+[TIGER-AI-Lab/MMLU-Pro](https://github.com/TIGER-AI-Lab/MMLU-Pro); one model
+covering less than 90% of the subset is left out. `data/pool/difficulty_targets.csv`
+holds the targets derived from it (1 - pass rate and 2PL IRT difficulty).
+To rebuild both:
+
 ```bash
-# 1. Targets from a model-pool response matrix (question_id + one 0/1 column per model)
+python evaluation/build_pool_matrix.py --download_dir pool_zips --out data/pool/mmlu_pro_hard_pool_responses.csv
+python evaluation/difficulty_targets.py --responses data/pool/mmlu_pro_hard_pool_responses.csv \
+  --out data/pool/difficulty_targets.csv
+```
+
+This public pool is not necessarily the pool used for Table 4.
+`evaluation/static_validation.py` scores the saved static outputs against
+these targets.
+
+To evaluate new runs:
+
+```bash
+# 1. Targets from any model-pool response matrix (question_id + one 0/1 column per model)
 python evaluation/difficulty_targets.py --responses pool_responses.csv --out results/targets.csv
 
 # 2. Per-question scores for each method
