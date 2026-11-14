@@ -1,0 +1,5 @@
+install 
+datasets 
+pandas
+numpy 
+scipy

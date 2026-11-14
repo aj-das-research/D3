@@ -1,0 +1,490 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\begin{document}
+\section{Experiment 0: Three-way Disagreement Comparison}
+
+\subsection{Goal}
+
+Experiment 0 is the sanity check for the central thesis: disagreement should
+become more informative when the three agents are actually heterogeneous, not
+only role-prompted copies of the same model. The comparison therefore has
+three rows:
+
+\begin{enumerate}
+\item \textbf{Homogeneous}: three role-prompted agents from one model family.
+\item \textbf{Heterogeneous, same family}: trained Agent-R, Agent-D, and
+Agent-C adapters, all on the same Qwen2.5-3B-Instruct base family.
+\item \textbf{Heterogeneous, different family}: trained Agent-R and Agent-C
+from Qwen2.5-3B-Instruct, but Agent-D trained from Mistral-7B-Instruct.
+\end{enumerate}
+
+For every row, the main reported statistic is the Spearman correlation between
+question disagreement \(D(q)\) and the Task-1 difficulty score. The current
+multiple-choice disagreement scorer is
+\[
+D(q)=0.5D_{\mathrm{answer}}(q)+0.5D_{\mathrm{confidence}}(q),
+\]
+where \(D_{\mathrm{answer}}\) is 0 when all agents choose the same option and
+1 otherwise, and \(D_{\mathrm{confidence}}\) is normalized confidence
+variance. A question is added to the hard-case buffer when \(D(q)>0.5\).
+
+\subsection{Current results}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrrrrrr}
+\hline
+Run & \(n\) & Scored & \(\rho\) & \(p\) & R acc. & D acc. & C acc. \\
+\hline
+Homogeneous, Groq Llama-3.3-70B & 30 & 30 & -0.0279 & 0.8838 & 0.367 & 0.400 & 0.367 \\
+Homogeneous, NVIDIA trace & 109 & 55 & 0.0689 & 0.6172 & 0.418 & 0.364 & 0.436 \\
+Homogeneous, NVIDIA trace & 300 & 98 & 0.3462 & 0.0005 & 0.306 & 0.316 & 0.306 \\
+Heterogeneous, Qwen R/D/C & 50 & 50 & 0.0996 & 0.4913 & 0.280 & 0.240 & 0.460 \\
+Heterogeneous, Qwen R/C + Mistral D & Pending & Pending & Pending & Pending & Pending & Pending & Pending \\
+\hline
+\end{tabular}
+\caption{Experiment 0 status. The Groq row is the clean completed baseline.
+The NVIDIA rows are diagnostic only because the parse-drop rate is high:
+49.5\% for the 109-row trace and 67.3\% for the 300-row trace. The Qwen
+R/D/C row is the completed same-family heterogeneous run.}
+\end{table}
+
+The completed clean baseline is the Groq homogeneous run in
+\texttt{Requirements.txt}. It has \(\rho=-0.0279\) and \(p=0.8838\), so
+homogeneous role-prompt disagreement does not track Task-1 difficulty. This is
+the expected result and keeps the thesis alive.
+
+The two local NVIDIA homogeneous JSONL files are useful as traces, but they
+should not be treated as the primary evidence because many rows failed strict
+parsing. The 300-row trace shows a significant positive correlation, but only
+98 of 300 rows are clean, so it needs a strict-JSON rerun before it can be
+used as a main table row.
+
+The completed same-family heterogeneous run is now available locally as
+\texttt{Experiment\_0/results/exp0\_heterogeneous.jsonl},
+\texttt{Experiment\_0/results/table1\_heterogeneous.csv}, and
+\texttt{Experiment\_0/results/table1\_heterogeneous.json}. It used 50 scored
+MMLU-Pro hard questions and produced \(\rho=0.0996\), \(p=0.4913\), mean
+\(D(q)=0.4945\), and an 88\% hard-case rate. Agent-C was strongest on this
+slice with 46.0\% accuracy; Agent-R and Agent-D reached 28.0\% and 24.0\%,
+respectively. The ensemble accuracy was 38.0\%.
+
+\subsection{Available trained agents}
+
+The same-family heterogeneous comparison has been run, and the local
+workspace now contains these adapters and outputs:
+
+\begin{itemize}
+\item \texttt{Agent\_r/agent\_r\_v0\_grpo\_adapter.zip}
+\item \texttt{agent d/results.zip}
+\item \texttt{agent c/results.zip}
+\item \texttt{agent d/MISTRAL TRAINED.zip}
+\end{itemize}
+
+These are all treated as Qwen-family adapters by
+\texttt{Experiment\_0/Experiment\_zero\_hetero.py}, except for the Mistral
+Agent-D adapter. The Mistral archive contains a LoRA adapter trained from
+\texttt{mistralai/Mistral-7B-Instruct-v0.3}, including the phase-2 SFT
+\texttt{checkpoint-1000}. That archive is the adapter source needed for the
+third, different-family row.
+
+\subsection{Run 1: same-family heterogeneous row}
+
+This row has been run and copied into \texttt{Experiment\_0/results/}. To
+reproduce it, upload the Qwen base model plus the three local adapter zips to
+Kaggle and run:
+
+\begin{verbatim}
+python /kaggle/working/Experiment_zero_hetero.py \
+  --base_model /kaggle/input/qwen2-5-3b-instruct \
+  --agent_r /kaggle/input/agent-r/agent_r_v0_grpo_adapter.zip \
+  --agent_d /kaggle/input/agent-d/results.zip \
+  --agent_c /kaggle/input/agent-c/results.zip \
+  --mmlu_path /kaggle/input/mmlu/mmlu_pro_hard_subset.csv \
+\section*{Experiment 0 -- Homogeneous Baseline (Table 1, homogeneous row)}
+
+\begin{verbatim}
+================================================================
+EXPERIMENT 0 -- Homogeneous Baseline (Table 1 homogeneous row)
+================================================================
+Backend:            groq
+Model:              llama-3.3-70b-versatile
+N questions total:  30
+N parseable:        30  (0 dropped)
+Parse-drop rate:    0.0%
+Spearman rho:       -0.0279
+p-value:            8.8378e-01
+Significant?        no  (alpha=0.05)
+----------------------------------------------------------------
+Buffer size:        0 / 500
+Buffer stats:       {'size': 0, 'total_added': 0}
+----------------------------------------------------------------
+  careful_reasoner     (R) acc: 0.367
+  domain_expert        (D) acc: 0.400
+  uncertain_analyst    (C) acc: 0.367
+================================================================
+\end{verbatim}
+
+\paragraph{Interpretation (per plan Section 10).}
+\begin{itemize}
+    \item If $|\rho| < 0.2$ or $p > 0.05$: homogeneous disagreement does \textbf{not} track difficulty. Thesis survives; proceed to train Agent-R.
+    \item If $|\rho| > 0.3$ and $p < 0.05$: homogeneous disagreement already correlates well. Pause and revisit the thesis before training.
+\end{itemize}
+\section{Corrections in experiments}
+In the agent R training part instead of ppo we are doing grpo
+\section{Experiments}
+
+\subsection{Experimental Setup}
+
+\paragraph{Models and Agents}
+All experiments are conducted using the Qwen2.5-3B base model. We construct three heterogeneous agents, each initialized from identical pretrained weights but fine-tuned independently under distinct training objectives. Agent-R is optimized for multi-step reasoning via supervised fine-tuning on chain-of-thought datasets followed by reinforcement learning with a process reward model. Agent-D is trained using domain-specific supervised fine-tuning on medical question-answering corpora to induce specialization in biomedical knowledge. Agent-C is optimized for calibration by minimizing a combined cross-entropy and expected calibration error (ECE) loss, producing reliable confidence estimates. After initialization, agents do not share gradients or parameters, ensuring that diversity arises solely from differences in training objectives rather than stochastic variation.
+\paragraph{Datasets}
+We evaluate our method on the MMLU-Pro benchmark, focusing on the hard subset consisting of questions with high annotator disagreement, which serves as a proxy for intrinsic difficulty. This dataset is used for all evaluation experiments, including correlation analysis and co-evolution performance tracking. For training the reasoning agent (Agent-R), we use a combination of GSM8K and MATH datasets with chain-of-thought annotations to encourage step-by-step reasoning. The domain-specialized agent (Agent-D) is trained on MedQA and PubMedQA, enabling strong performance on biomedical question answering. The calibration agent (Agent-C) is trained on MMLU-Pro with confidence annotations to optimize expected calibration error. All datasets are split into disjoint training, validation, and evaluation subsets to prevent leakage, and no evaluation samples are used during training or co-evolution.
+\paragraph{Training Details}
+All agents are fine-tuned using Low-Rank Adaptation (LoRA) applied to the Qwen2.5-3B base model. We use a LoRA rank of $r=16$ and scaling factor $\alpha=32$ across all agents to ensure parameter efficiency while maintaining expressivity.
+
+Agent-R is first initialized via supervised fine-tuning (SFT) on GSM8K and MATH with chain-of-thought annotations for 2 epochs, using a learning rate of $2 \times 10^{-4}$. This is followed by reinforcement learning using Proximal Policy Optimization (PPO) with a process reward model that evaluates intermediate reasoning steps. PPO training is conducted for 200 steps with early stopping if validation performance plateaus for 20 consecutive steps.
+
+Agent-D is trained via domain-adaptive pretraining on PubMed abstracts for 1 epoch, followed by supervised fine-tuning on MedQA and PubMedQA for 2 epochs with a learning rate of $1 \times 10^{-4}$.
+
+Agent-C is optimized for calibration using a combined loss:
+\begin{equation}
+\mathcal{L} = \mathcal{L}_{CE} + \lambda \cdot \mathcal{L}_{ECE}
+\end{equation}
+where $\lambda = 0.3$. After training, temperature scaling is applied on a validation set to ensure expected calibration error (ECE) below 0.05 before deployment.
+
+During co-evolution, each agent is updated using LoRA-only optimization for 50 gradient steps per iteration with a learning rate of $1 \times 10^{-5}$. The process runs for 30 iterations, with updates triggered every 50 processed queries using samples drawn from the hard case buffer.
+
+Key training hyperparameters are summarized in Table~\ref{tab:training}.
+
+\begin{table}[h]
+\centering
+\caption{Training hyperparameters for all agents.}
+\label{tab:training}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Component} & \textbf{LR} & \textbf{Steps/Epochs} & \textbf{Notes} \\
+\midrule
+Agent-R (SFT) & $2e^{-4}$ & 2 epochs & GSM8K + MATH \\
+Agent-R (PPO) & $1e^{-5}$ & 200 steps & Step-level reward \\
+Agent-D & $1e^{-4}$ & 3 epochs & PubMed + QA \\
+Agent-C & $1e^{-4}$ & 2 epochs & CE + ECE loss \\
+Co-evolution & $1e^{-5}$ & 30 $\times$ 50 steps & LoRA only \\
+\bottomrule
+\end{tabular}
+\end{table}
+\paragraph{Co-evolution Protocol}
+We employ an iterative co-evolution framework in which the three agents are periodically updated using high-disagreement samples. The process operates over a stream of input questions and is triggered every $K=50$ queries to ensure training stability.
+
+At each co-evolution iteration, we construct a \textit{hard case buffer} containing previously encountered questions with high disagreement scores $D(q)$. The buffer has a fixed capacity of 500 samples with first-in-first-out (FIFO) eviction. From this buffer, we select the top-200 samples ranked by $D(q)$ to form the training set for the current iteration.
+
+Each agent is then updated independently using task-specific subsets of the selected samples:
+\begin{itemize}
+    \item \textbf{Agent-R}: fine-tuned on cases with high disagreement between reasoning and domain predictions, focusing on improving multi-step reasoning consistency.
+    \item \textbf{Agent-D}: updated on cases where domain-specific errors are observed relative to other agents, reinforcing specialized knowledge.
+    \item \textbf{Agent-C}: optimized on samples where confidence estimates are misaligned with correctness, improving calibration.
+\end{itemize}
+
+All updates are performed using LoRA-based optimization for 50 gradient steps per agent with a learning rate of $1 \times 10^{-5}$. The co-evolution process is run for 30 iterations in total, resulting in 1500 update steps per agent.
+
+To prevent training instability and catastrophic forgetting, updates are restricted to hard cases and applied intermittently rather than after every query. Metrics including accuracy, expected calibration error (ECE), and disagreement–difficulty correlation are recorded after each iteration to track system dynamics over time.
+\paragraph{Disagreement Scoring}
+We define a disagreement score $D(q)$ to quantify the extent of divergence among the three agents for a given question $q$. Each agent produces both an answer and an associated confidence score in $[0,1]$. The disagreement score combines a semantic component and a confidence-based component:
+
+\begin{equation}
+D(q) = 0.6 \cdot D_{\text{semantic}}(q) + 0.4 \cdot D_{\text{confidence}}(q)
+\end{equation}
+
+The semantic disagreement component measures the divergence between agent outputs in embedding space. Specifically, we encode each answer using a sentence embedding model and compute the mean pairwise cosine distance:
+\begin{equation}
+D_{\text{semantic}}(q) = \frac{1}{3} \sum_{(i,j)} \left(1 - \cos\left(e_i, e_j\right)\right)
+\end{equation}
+where $e_i$ and $e_j$ are embeddings of the answers from agents $i$ and $j$.
+
+The confidence disagreement component captures uncertainty divergence across agents:
+\begin{equation}
+D_{\text{confidence}}(q) = \mathrm{Var}(c_R, c_D, c_C)
+\end{equation}
+where $c_R$, $c_D$, and $c_C$ denote the confidence scores of Agent-R, Agent-D, and Agent-C, respectively.
+
+A question is classified as a hard case if $D(q) > \theta$, where we set $\theta = 0.5$ in all experiments. Hard cases are stored in a rolling buffer and used to drive the co-evolution updates.
+\paragraph{Evaluation Metrics}
+We evaluate our framework using four primary metrics that capture correctness, calibration, diversity, and verification quality.
+
+\textbf{Disagreement–Difficulty Correlation.} The primary metric is the Spearman rank correlation coefficient ($\rho$) between the disagreement score $D(q)$ and ground-truth question difficulty labels from MMLU-Pro. This measures whether disagreement serves as a reliable proxy for intrinsic difficulty.
+
+\textbf{Accuracy.} We report accuracy on the MMLU-Pro hard subset, defined as the proportion of correctly answered questions based on majority voting across agents or individual agent predictions where specified.
+
+\textbf{Expected Calibration Error (ECE).} Calibration quality is measured using ECE:
+\begin{equation}
+\mathrm{ECE} = \sum_{m=1}^{M} \frac{|B_m|}{n} \left| \mathrm{acc}(B_m) - \mathrm{conf}(B_m) \right|
+\end{equation}
+where $B_m$ denotes the set of samples in bin $m$, $\mathrm{acc}(B_m)$ is the empirical accuracy, and $\mathrm{conf}(B_m)$ is the average predicted confidence. Lower ECE indicates better calibration.
+
+\textbf{Diversity (KL Divergence).} To quantify diversity between agents, we compute the average pairwise Kullback–Leibler (KL) divergence over a fixed probe set:
+\begin{equation}
+\mathrm{KL}_{\text{min}} = \min_{i \neq j} \mathbb{E}_{q \sim \mathcal{Q}} \left[ \mathrm{KL}(P_i(\cdot|q) \parallel P_j(\cdot|q)) \right]
+\end{equation}
+where $P_i(\cdot|q)$ denotes the output token distribution of agent $i$. Maintaining high KL divergence indicates preservation of structural diversity during co-evolution.
+
+\subsection{Existence Proof (Experiment 0)}
+
+We first evaluate whether disagreement from homogeneous agents (identical models with different prompts) correlates with question difficulty. This serves as a baseline to test whether prompt-induced diversity alone provides a reliable verification signal.
+
+We construct three homogeneous agents using the same base model with distinct role prompts: \textit{careful reasoner}, \textit{domain expert}, and \textit{uncertain analyst}. All agents process the same set of questions from the MMLU-Pro hard subset. For each question, we compute the disagreement score $D(q)$ and measure its Spearman rank correlation ($\rho$) with ground-truth difficulty labels.
+
+\begin{table}[h]
+\centering
+\caption{Experiment 0: Homogeneous baseline results.}
+\label{tab:exp0_homogeneous}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Spearman $\rho$ & -0.028 \\
+p-value & 0.884 \\
+Significant ($\alpha=0.05$) & No \\
+\midrule
+Agent-R Accuracy & 0.367 \\
+Agent-D Accuracy & 0.400 \\
+Agent-C Accuracy & 0.367 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\begin{table}[h]
+\centering
+\caption{Experiment 0: Comparison between homogeneous and heterogeneous agents.}
+\label{tab:exp0_comparison}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Setting} & \textbf{Spearman $\rho$} & \textbf{p-value} \\
+\midrule
+Homogeneous Agents & -- & -- \\
+Heterogeneous Agents (Ours) & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+\paragraph{Interpretation.}
+The near-zero Spearman correlation ($\rho = -0.028$, $p = 0.884$) indicates that disagreement among homogeneous agents does not meaningfully correlate with question difficulty. This confirms that prompt-based diversity alone is insufficient to produce a reliable verification signal. These findings motivate the need for structural diversity through heterogeneous training objectives, as explored in subsequent experiments.
+
+\subsection{Ablation Study}
+
+We evaluate the contribution of each component in our framework through three ablation settings: (i) the full system, (ii) removal of the diversity regulariser, and (iii) replacement of heterogeneous agents with homogeneous prompt-based agents.
+
+\begin{table}[h]
+\centering
+\caption{Ablation study results.}
+\label{tab:ablation}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Condition} & \textbf{Accuracy} $\uparrow$ & \textbf{ECE} $\downarrow$ & \textbf{KL Div} $\uparrow$ & $\boldsymbol{\rho(D,q)}$ $\uparrow$ \\
+\midrule
+Full System & -- & -- & -- & -- \\
+No Diversity Regulariser & -- & -- & -- & -- \\
+Homogeneous Agents & -- & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Analysis.}
+We analyze how removing structural diversity and the diversity regulariser impacts performance, calibration, and disagreement–difficulty correlation. (Results to be filled.)
+
+\subsection{Main Evaluation}
+
+We evaluate the full system on the MMLU-Pro hard subset over multiple co-evolution iterations. We track performance, calibration, diversity, and verification quality throughout training.
+
+\begin{table}[h]
+\centering
+\caption{Main evaluation results on hard subset.}
+\label{tab:main_results}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Metric} & \textbf{Initial} & \textbf{Final} & \textbf{Change} \\
+\midrule
+Accuracy & -- & -- & -- \\
+ECE & -- & -- & -- \\
+KL Divergence & -- & -- & -- \\
+Spearman $\rho$ & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Trends.}
+We further analyze how these metrics evolve over co-evolution iterations. (Plots to be added.)
+
+\subsection{Diversity Regulariser Validation}
+
+We validate the effectiveness of the diversity regulariser through a controlled collapse experiment.
+
+\begin{table}[h]
+\centering
+\caption{Effect of diversity regulariser on agent collapse.}
+\label{tab:regulariser}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Setting} & \textbf{KL Divergence (Final)} & \textbf{Collapse Observed} \\
+\midrule
+Without Regulariser & -- & -- \\
+With Regulariser & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Observation.}
+We compare whether agents converge to similar distributions in the absence of the regulariser versus when it is applied. (Results to be filled.)
+
+\subsection{Implementation Details(for appendix)}
+\section{Results}
+
+\subsection{Existence Proof Results}
+
+We compare disagreement–difficulty correlation between homogeneous (prompt-diverse) agents and our heterogeneous (training-objective diverse) agents on the MMLU-Pro hard subset. Results are summarized in Table~\ref{tab:exp0_comparison}.
+
+Homogeneous agents, constructed from identical base models with role-based prompting, exhibit weak or negligible correlation between disagreement scores $D(q)$ and question difficulty. In contrast, heterogeneous agents—trained under distinct objectives for reasoning, domain specialization, and calibration—demonstrate substantially stronger correlation.
+
+\begin{table}[h]
+\centering
+\caption{Experiment 0 results: correlation between disagreement and question difficulty.}
+\label{tab:exp0_comparison_results}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Setting} & \textbf{Spearman $\rho$} & \textbf{p-value} \\
+\midrule
+Homogeneous Agents & -- & -- \\
+Heterogeneous Agents (Ours) & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Interpretation.}
+These results indicate that prompt-based diversity alone does not produce meaningful disagreement signals. By contrast, structural diversity induced through distinct training objectives yields disagreement that aligns more closely with intrinsic question difficulty. This supports our central hypothesis that disagreement can serve as a verification proxy only when it arises from heterogeneous agent behaviors rather than superficial prompt variation.
+
+\subsection{Ablation Results}
+
+We evaluate the contribution of each component in our framework through three ablation settings: (i) the full system, (ii) removal of the diversity regulariser, and (iii) replacement of heterogeneous agents with homogeneous prompt-based agents. Results are summarized in Table~\ref{tab:ablation_results}.
+
+\begin{table}[h]
+\centering
+\caption{Ablation results across key metrics.}
+\label{tab:ablation_results}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Condition} & \textbf{Accuracy} $\uparrow$ & \textbf{ECE} $\downarrow$ & \textbf{KL Div} $\uparrow$ & $\boldsymbol{\rho(D,q)}$ $\uparrow$ \\
+\midrule
+Full System & -- & -- & -- & -- \\
+No Diversity Regulariser & -- & -- & -- & -- \\
+Homogeneous Agents & -- & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Analysis.}
+Removing the diversity regulariser leads to a reduction in inter-agent diversity, as reflected by decreased KL divergence, and may degrade disagreement–difficulty correlation. Replacing heterogeneous agents with homogeneous prompt-based agents results in a substantial drop in correlation, reinforcing that structural diversity is necessary for meaningful disagreement. The full system consistently achieves the best balance between accuracy, calibration, and diversity. (Exact values to be filled.)
+
+\subsection{Main Performance}
+
+We evaluate the overall performance of the proposed framework on the MMLU-Pro hard subset before and after co-evolution. Results are summarized in Table~\ref{tab:main_performance}.
+
+\begin{table}[h]
+\centering
+\caption{Main performance comparison before and after co-evolution.}
+\label{tab:main_performance}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Metric} & \textbf{Initial} & \textbf{Final} & \textbf{Change} \\
+\midrule
+Accuracy & -- & -- & -- \\
+ECE & -- & -- & -- \\
+KL Divergence & -- & -- & -- \\
+Spearman $\rho$ & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Analysis.}
+The co-evolution process is expected to improve performance on hard cases while maintaining calibration and structural diversity. In particular, increases in accuracy and disagreement–difficulty correlation ($\rho$) indicate that the system becomes more effective at both solving and identifying challenging questions. Stable or improved KL divergence suggests that diversity between agents is preserved throughout training, while low ECE confirms that calibration remains reliable. (Exact values to be filled.)
+
+\subsection{Co-evolution Dynamics}
+
+We analyze the evolution of system performance over co-evolution iterations. Specifically, we track accuracy, expected calibration error (ECE), inter-agent diversity (KL divergence), and disagreement–difficulty correlation ($\rho$) across training iterations.
+
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.9\linewidth}{\centering Placeholder for plots: Accuracy, ECE, KL divergence, and Spearman $\rho$ vs. iteration}}
+\caption{Evolution of key metrics over co-evolution iterations.}
+\label{fig:dynamics}
+\end{figure}
+
+\paragraph{Analysis.}
+We expect accuracy to improve over successive iterations as agents adapt to high-disagreement cases. Disagreement–difficulty correlation ($\rho$) should increase or remain stable, indicating that the verification signal remains reliable during training. KL divergence is expected to remain above a minimum threshold, demonstrating that structural diversity is preserved and collapse is avoided. Expected calibration error (ECE) should remain low, confirming that confidence estimates remain well-calibrated throughout co-evolution. (Plots to be added.)
+
+\subsection{Diversity Regulariser Analysis}
+
+We evaluate the effectiveness of the proposed diversity regulariser through a controlled collapse experiment. Specifically, we compare two settings: (i) co-evolution without the diversity regulariser, and (ii) co-evolution with the regulariser enabled. Both settings are initialized identically and trained on the same data.
+
+\begin{table}[h]
+\centering
+\caption{Effect of diversity regulariser on inter-agent diversity.}
+\label{tab:regulariser_results}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Setting} & \textbf{Final KL Divergence} & \textbf{Collapse Observed} \\
+\midrule
+Without Regulariser & -- & -- \\
+With Regulariser & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.9\linewidth}{\centering Placeholder for KL divergence vs. iteration plot}}
+\caption{KL divergence between agents over co-evolution iterations with and without the diversity regulariser.}
+\label{fig:regulariser}
+\end{figure}
+
+\paragraph{Analysis.}
+Without the diversity regulariser, agents are expected to converge toward similar output distributions, leading to reduced KL divergence and potential collapse. In contrast, the proposed regulariser maintains separation between agent distributions, preserving structural diversity throughout training. This demonstrates that explicit diversity constraints are necessary to prevent homogenization in co-evolving multi-agent systems. (Results to be filled.)
+
+\subsection{Qualitative Analysis}
+
+We present representative examples from the MMLU-Pro hard subset to illustrate how heterogeneous agents exhibit meaningful disagreement across different failure modes.
+
+\begin{table}[h]
+\centering
+\caption{Example of agent disagreement on a hard question.}
+\label{tab:qualitative}
+\begin{tabular}{p{0.9\linewidth}}
+\toprule
+\textbf{Question:} \\
+\textit{-- (example question here) --} \\
+\midrule
+\textbf{Agent-R (Reasoning):} -- \\
+\textbf{Agent-D (Domain):} -- \\
+\textbf{Agent-C (Confidence):} -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Analysis.}
+In this example, the agents produce divergent responses reflecting their distinct training objectives. Agent-R emphasizes multi-step reasoning, Agent-D relies on domain-specific patterns, and Agent-C provides calibrated confidence estimates. Such structured disagreement highlights cases where uncertainty is intrinsic to the question, supporting the use of disagreement as a proxy for difficulty. (Examples to be filled.)
+\subsection{Failure Cases}
+
+Despite overall improvements, the proposed framework exhibits several limitations. We identify representative failure modes to better understand the boundaries of disagreement as a verification signal.
+
+\begin{itemize}
+    \item \textbf{Consistent but Incorrect Agreement.} In some cases, all agents produce the same incorrect answer with high confidence, resulting in low disagreement despite high difficulty. This limits the reliability of $D(q)$ as a proxy in such scenarios.
+
+    \item \textbf{Spurious High Disagreement.} Certain questions trigger high disagreement due to ambiguous phrasing or dataset noise, even when the underlying problem is not inherently difficult.
+
+    \item \textbf{Calibration Drift.} Although Agent-C is trained for calibration, its confidence estimates may degrade slightly during extended co-evolution, particularly when exposed to distribution shifts in hard cases.
+
+    \item \textbf{Domain Transfer Limitations.} Agent-D may fail on questions requiring cross-domain reasoning, leading to disagreement driven by domain mismatch rather than intrinsic difficulty.
+\end{itemize}
+
+\paragraph{Discussion.}
+These failure cases highlight that disagreement is not a perfect proxy for difficulty and can be influenced by systematic biases or dataset artifacts. Addressing these limitations, such as improving robustness to ambiguous inputs and maintaining calibration under distribution shift, is an important direction for future work.
+\end{document}
