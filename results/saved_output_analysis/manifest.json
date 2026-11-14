@@ -1,0 +1,32 @@
+[
+  {
+    "input": "experiments/static_disagreement/outputs/heterogeneous_diff_family_n300.jsonl",
+    "output": "results/saved_output_analysis/heterogeneous_diff_family_n300_canonical_rescored.csv",
+    "input_rows": 300,
+    "scored_rows": 300
+  },
+  {
+    "input": "experiments/static_disagreement/outputs/heterogeneous_diff_family_n50.jsonl",
+    "output": "results/saved_output_analysis/heterogeneous_diff_family_n50_canonical_rescored.csv",
+    "input_rows": 50,
+    "scored_rows": 50
+  },
+  {
+    "input": "experiments/static_disagreement/outputs/heterogeneous_same_family_n50.jsonl",
+    "output": "results/saved_output_analysis/heterogeneous_same_family_n50_canonical_rescored.csv",
+    "input_rows": 50,
+    "scored_rows": 50
+  },
+  {
+    "input": "experiments/static_disagreement/outputs/homogeneous_n109.jsonl",
+    "output": "results/saved_output_analysis/homogeneous_n109_canonical_rescored.csv",
+    "input_rows": 109,
+    "scored_rows": 109
+  },
+  {
+    "input": "experiments/static_disagreement/outputs/homogeneous_n300.jsonl",
+    "output": "results/saved_output_analysis/homogeneous_n300_canonical_rescored.csv",
+    "input_rows": 300,
+    "scored_rows": 300
+  }
+]

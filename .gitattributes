@@ -1,0 +1,17 @@
+* text=auto
+
+*.py text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.jsonl text eol=lf
+*.md text eol=lf
+*.tex text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+*.csv text
+*.csv -whitespace
+*.ipynb text eol=lf
+*.jpg binary
+*.png binary
+*.svg text eol=lf

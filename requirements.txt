@@ -1,0 +1,19 @@
+# Analysis and tests
+numpy
+pandas
+scipy
+pytest
+
+# Data preparation, agent training and static runs
+accelerate
+bitsandbytes
+datasets
+huggingface-hub
+openai
+peft
+protobuf<6
+sentencepiece
+torch
+tqdm
+transformers
+trl

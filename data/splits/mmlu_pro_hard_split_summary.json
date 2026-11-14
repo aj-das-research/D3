@@ -1,0 +1,80 @@
+{
+  "source": "data/mmlu_pro_hard_subset.json",
+  "seed": 2026,
+  "counts": {
+    "train": 2416,
+    "validation": 300,
+    "test": 300
+  },
+  "unique_question_ids": 3016,
+  "difficulty_range_by_split": {
+    "test": {
+      "min": 0.4137,
+      "max": 0.9465,
+      "mean": 0.6218093333333333,
+      "std": 0.10788122069922806
+    },
+    "train": {
+      "min": 0.4117,
+      "max": 0.9867,
+      "mean": 0.623195488410596,
+      "std": 0.10576166571171125
+    },
+    "validation": {
+      "min": 0.4187,
+      "max": 0.8733,
+      "mean": 0.623793,
+      "std": 0.10669259354644382
+    }
+  },
+  "maximum_absolute_category_share_gap": 0.005720601237842626,
+  "category_share_absolute_gaps": {
+    "test": {
+      "biology": 0.0012732095490716171,
+      "business": 0.0012953138815207724,
+      "chemistry": 0.0023872679045092993,
+      "computer science": 0.0022679045092838194,
+      "economics": 0.0009416445623342175,
+      "engineering": 0.0020026525198938994,
+      "health": 0.0012068965517241376,
+      "history": 0.002895667550839965,
+      "law": 0.0005481874447391677,
+      "math": 0.0006587091069849837,
+      "other": 0.00026083112290008724,
+      "physics": 0.00020335985853225935,
+      "psychology": 0.000663129973474801
+    },
+    "train": {
+      "biology": 0.00031619442443831663,
+      "business": 0.00032168391097370935,
+      "chemistry": 0.0010067718305900586,
+      "computer science": 0.00014931403376253725,
+      "economics": 0.00023385212640750393,
+      "engineering": 8.34401953379027e-05,
+      "health": 0.00029972596483215236,
+      "history": 0.0007191227361357522,
+      "law": 0.00013613926607761173,
+      "math": 0.00016358669875454757,
+      "other": 6.477594111757232e-05,
+      "physics": 0.000363404008642626,
+      "psychology": 0.00016468459606162281
+    },
+    "validation": {
+      "biology": 0.0012732095490716171,
+      "business": 0.0012953138815207724,
+      "chemistry": 0.005720601237842626,
+      "computer science": 0.0010654288240495146,
+      "economics": 0.0009416445623342175,
+      "engineering": 0.0013306808134394277,
+      "health": 0.0012068965517241376,
+      "history": 0.002895667550839965,
+      "law": 0.0005481874447391677,
+      "math": 0.0006587091069849837,
+      "other": 0.00026083112290008724,
+      "physics": 0.0031299734748010677,
+      "psychology": 0.000663129973474801
+    }
+  },
+  "manifest": "data/splits/mmlu_pro_hard_split_manifest.csv",
+  "manifest_sha256": "d06f8afb50f7fff4fb0f5dc0a7ca19c040d25dbe0fad3c8544d1fd6353129ed8"
+}

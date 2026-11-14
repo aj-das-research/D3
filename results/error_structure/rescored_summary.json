@@ -1,0 +1,44 @@
+[
+  {
+    "file": "heterogeneous_diff_family_n300.jsonl",
+    "n_total": 300,
+    "n_scored": 300,
+    "n_dropped": 0,
+    "adaptive_threshold_p80": 0.6128,
+    "hard_case_rate_revised": 0.2033,
+    "mean_D_revised": 0.475,
+    "spearman_rho_revised": 0.0029,
+    "mean_answer_entropy": 0.7081,
+    "mean_pairwise_js": 0.3173,
+    "mean_confidence": 0.121,
+    "mean_correctness_div": 0.5433
+  },
+  {
+    "file": "heterogeneous_diff_family_n50.jsonl",
+    "n_total": 50,
+    "n_scored": 50,
+    "n_dropped": 0,
+    "adaptive_threshold_p80": 0.6151,
+    "hard_case_rate_revised": 0.2,
+    "mean_D_revised": 0.4781,
+    "spearman_rho_revised": -0.0081,
+    "mean_answer_entropy": 0.6981,
+    "mean_pairwise_js": 0.3173,
+    "mean_confidence": 0.1391,
+    "mean_correctness_div": 0.64
+  },
+  {
+    "file": "heterogeneous_same_family_n50.jsonl",
+    "n_total": 50,
+    "n_scored": 50,
+    "n_dropped": 0,
+    "adaptive_threshold_p80": 0.5643,
+    "hard_case_rate_revised": 0.2,
+    "mean_D_revised": 0.4171,
+    "spearman_rho_revised": 0.1539,
+    "mean_answer_entropy": 0.6192,
+    "mean_pairwise_js": 0.2744,
+    "mean_confidence": 0.1091,
+    "mean_correctness_div": 0.52
+  }
+]

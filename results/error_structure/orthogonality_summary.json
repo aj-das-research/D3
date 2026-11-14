@@ -1,0 +1,17 @@
+{
+  "source_file": "heterogeneous_diff_family_n300.jsonl",
+  "n": 300,
+  "R_accuracy": 0.2533,
+  "D_accuracy": 0.2267,
+  "C_accuracy": 0.4733,
+  "RD_error_jaccard": 0.6403,
+  "RC_error_jaccard": 0.5851,
+  "DC_error_jaccard": 0.5116,
+  "R_only_correct": 15,
+  "D_only_correct": 24,
+  "C_only_correct": 61,
+  "R_ECE": 0.3476,
+  "D_ECE": 0.0828,
+  "C_ECE": 0.0518,
+  "mean_pairwise_JS": 0.3173
+}

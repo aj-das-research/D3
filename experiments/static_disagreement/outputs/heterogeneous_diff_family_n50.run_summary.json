@@ -1,0 +1,13 @@
+{
+  "run": "heterogeneous_qwen_r_c_mistral_d",
+  "n_questions": 50,
+  "n_scored": 50,
+  "spearman_rho_Dq_vs_difficulty": 0.28323610057954457,
+  "spearman_p_value": 0.046245307618911484,
+  "mean_D_q": 0.5427514309353295,
+  "hard_case_rate": 0.9,
+  "agent_r_accuracy": 0.28,
+  "agent_d_accuracy": 0.26,
+  "agent_c_accuracy": 0.56,
+  "ensemble_accuracy": 0.44
+}

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="500">
+<rect width="100%" height="100%" fill="white"/>
+<text x="380" y="30" text-anchor="middle" font-family="Arial" font-size="18">Diversity vs verification signal</text>
+<line x1="70" y1="430" x2="730" y2="430" stroke="#444"/>
+<line x1="70" y1="50" x2="70" y2="430" stroke="#444"/>
+<text x="380" y="480" text-anchor="middle" font-family="Arial" font-size="13">mean_pairwise_js</text>
+<text x="20" y="250" transform="rotate(-90 20,250)" text-anchor="middle" font-family="Arial" font-size="13">spearman_rho_revised</text>
+<circle cx="730" cy="404.1975308641975" r="5" fill="#b1443c"/>
+<text x="738" y="398.1975308641975" font-family="Arial" font-size="10">heterogeneous_diff_family_</text>
+<circle cx="730" cy="430" r="5" fill="#b1443c"/>
+<text x="738" y="424" font-family="Arial" font-size="10">heterogeneous_diff_family_</text>
+<circle cx="640.7658367475574" cy="50" r="5" fill="#b1443c"/>
+<text x="648.7658367475574" y="44" font-family="Arial" font-size="10">heterogeneous_same_family_</text>
+</svg>
