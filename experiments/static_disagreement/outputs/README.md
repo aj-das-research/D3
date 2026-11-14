@@ -21,7 +21,8 @@ verbalised confidence; distributions are reconstructed by the maximum-entropy
 rule of Appendix D.4.
 
 Every row also carries `question_id`, `category`, `correct_answer` and
-`difficulty_score` (the structural proxy `s(q)`). The `D_q`, `D_semantic` and
+`difficulty_score` (the structural proxy without the category adjustment;
+see the main README). The `D_q`, `D_semantic` and
 `is_hard_case` fields were written at run time with a fixed 0.5 threshold; the
 analysis scripts recompute the composite score from the agent outputs and
 apply the adaptive 80th-percentile threshold.

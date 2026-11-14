@@ -13,8 +13,8 @@ Model weights and adapter archives are not stored in this repository.
 - `agent_r/train_agent_r_grpo.py` and `agent_r/agent_r_grpo_training.ipynb`:
   GRPO refinement of the Agent-R SFT adapter on GSM8K, with a reward that
   combines answer-format validity and correctness.
-- `agent_r/agent_r_ppo_baseline.ipynb`: the PPO variant compared against GRPO
-  in Appendix D.3.
+- `agent_r/agent_r_ppo_baseline.ipynb`: a PPO refinement notebook (Appendix
+  D.3 compares PPO with GRPO).
 
 Inputs are read from the environment:
 
@@ -63,3 +63,16 @@ python agents/agent_c/train_agent_c.py \
 At inference Agent-C scores next-token logits over the option letters `A-J`,
 applies `softmax(logits / T)` with the saved temperature, and returns the
 arg-max letter with its probability as confidence.
+
+## Script defaults and Appendix D.1-D.2
+
+Some script defaults differ from the values listed in the paper. Pass the
+paper's values explicitly to match them:
+
+| Setting | Paper (App. D.1-D.2) | Script default |
+| --- | --- | --- |
+| Agent-R SFT data | GSM8K, MATH | GSM8K |
+| Agent-R SFT LoRA targets | attention + gated-MLP up/down | attention only |
+| Agent-R GRPO | lr 1e-5, 200 steps | lr 5e-6, 20 steps (`GRPO_MAX_STEPS`) |
+| Agent-D SFT epochs | 3 | 2 (`--phase2_epochs`) |
+| Agent-C epochs | 2 | 1 with `--profile deadline` (default), 2 with `--profile balanced` |

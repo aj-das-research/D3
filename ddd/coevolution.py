@@ -1,6 +1,6 @@
 """
 Closed-loop co-evolution with a diversity regulariser (paper Sections 3.5-3.6,
-Appendix D.6-D.8).
+Appendix D.6-D.7).
 
 Each iteration:
 

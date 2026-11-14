@@ -15,12 +15,12 @@ collapsing into one behaviour.
 ## Repository layout
 
 ```
-configs/paper.json            all hyperparameters from the paper              (App. D.9)
+configs/paper.json            run configuration: values stated in the paper, plus release choices for values it leaves open
 ddd/                          core method
   disagreement_scorer.py        composite score D(q) and label-free D_LF      (Sec. 3.4)
-  hard_case_buffer.py           rolling hard-case buffer, per-agent sampling  (Sec. 3.5, App. D.6)
+  hard_case_buffer.py           threshold-based hard-case buffer used by the static runners and coevolution_loop.py
   diversity_regularizer.py      hinge on mean pairwise JS, NumPy and PyTorch  (Sec. 3.6, Eq. 9)
-  coevolution.py                closed co-evolution loop, backend-agnostic    (Sec. 3.6, App. D.6-D.8)
+  coevolution.py                closed co-evolution loop with the App. D.6 sampling rules (Sec. 3.5-3.6)
   coevolution_loop.py           standalone batch builder from a predictions file
   split_guard.py                fail-closed train/validation/test checks      (Sec. 4, App. F.1)
   config.py                     loads configs/paper.json
@@ -61,12 +61,12 @@ tests/                        unit tests (no model downloads)
 | Structural complexity proxy `s(q)`, hard subset (Sec. 4, App. C) | `data/` |
 | Split manifest and guards (App. F.1) | `data/splits/`, `ddd/split_guard.py` |
 | Composite score `D(q)`, label-free `D_LF` (Sec. 3.4) | `ddd/disagreement_scorer.py` |
-| Hard-case buffer and sampling rules (Sec. 3.5, App. D.6) | `ddd/coevolution.py`, `ddd/hard_case_buffer.py` |
+| Hard-case buffer and sampling rules (Sec. 3.5, App. D.6) | `ddd/coevolution.py` |
 | Diversity regulariser (Eq. 9) | `ddd/diversity_regularizer.py` |
 | Agent training (Sec. 3.2, App. D.1-D.3) | `agents/` |
 | Static disagreement (Table 1) | `experiments/static_disagreement/`, with saved outputs |
 | Co-evolution, regulariser and agent ablations (Table 2, Fig. 2, Tables 8-9) | `experiments/coevolution/`, `scripts/` |
-| Component ablation and significance tests (Table 3, App. G.8) | `analysis/saved_output_analysis.py` (also reads co-evolution predictions) |
+| Single-component and label-free score variants (part of Table 3), significance tests (App. G.8) | `analysis/saved_output_analysis.py` (also reads co-evolution predictions) |
 | Validated targets and estimator comparison (Table 4) | `evaluation/` |
 | Downstream utility (Table 5, App. I) | `evaluation/downstream.py` |
 | Self-consistency sweep (App. G.5), buffer and threshold sweeps (App. G.7) | `experiments/self_consistency/`, `scripts/` |
@@ -75,17 +75,20 @@ tests/                        unit tests (no model downloads)
 
 Saved outputs are included only for the static runs (see
 [Saved outputs](#saved-outputs)). The co-evolution, Table 4-5 and sweep
-scripts implement the procedures specified in the paper; their run outputs
-are not part of this release, so these scripts have not been checked against
-the reported numbers. The exploratory design-space study (App. H) is not
-included. MUSE and EIP, the two external estimators in Table 4, are run with
-their official implementations:
+scripts follow the procedures as described in the paper; where the paper
+leaves a detail open, the value used here is a choice made for this release
+(listed in `configs/paper.json`). Their run outputs are not part of this
+release, so these scripts have not been checked against the reported
+numbers. The exploratory design-space study (App. H) is not included. For
+MUSE and EIP, the two external estimators in Table 4, use the official
+implementations:
 [LARK-NLP-Lab/MUSE](https://github.com/LARK-NLP-Lab/MUSE) and
 [Leozz04/EIP](https://github.com/Leozz04/EIP).
 
 ## Trained adapters
 
-The LoRA adapters used for the static runs are hosted on Kaggle:
+The LoRA adapters used for the same-family static run are hosted on Kaggle.
+They were trained before the split manifest was introduced.
 
 | Agent | Base model | Download |
 | --- | --- | --- |
@@ -130,8 +133,12 @@ bootstrap 95% interval (1,000 question resamples) and a permutation p-value
 
 ## Data and splits
 
-`data/mmlu_pro_hard_subset.{json,csv}` hold the 3,016 MMLU-Pro records with the
-highest structural-proxy score; `difficulty_score` is `s(q)` from Eq. 10.
+`data/mmlu_pro_hard_subset.{json,csv}` hold the 3,016 MMLU-Pro test records
+with the highest structural-proxy score. Two fields carry the proxy:
+`final_difficulty` is Eq. 10 including the category adjustment `b_cat` and
+clipped to [0, 1], and is the value the subset was selected on;
+`difficulty_score` is the same expression without `b_cat` and is the target
+`s(q)` used by the runners and analysis scripts in this repository.
 To rebuild them from the Hugging Face dataset:
 
 ```bash
@@ -290,8 +297,9 @@ MODEL=/path/to/Qwen2.5-3B-Instruct scripts/run_self_consistency_sweep.sh
 ```
 
 This samples 100 reasoning paths per test question and scores budgets of 5,
-10, 20, 40 and 100 with the same composite, treating each third of the
-samples as one pseudo-agent.
+10, 20, 40 and 100 with the same composite. The paper does not specify how
+sampled answers enter the composite; here each third of the samples acts as
+one pseudo-agent.
 
 ## Figures
 

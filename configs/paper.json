@@ -1,12 +1,25 @@
 {
-  "_comment": "Hyperparameters from the paper (Sections 3-5, Appendix D). All runs read this file; command-line flags override individual values.",
+  "_comment": "Run configuration. Values under _release_choices are not specified in the paper and were chosen for this release; everything else follows Sections 3-5 and Appendix D. Command-line flags override individual values.",
+  "_release_choices": [
+    "coevolution.train_batch_size",
+    "coevolution.slice_size",
+    "coevolution.micro_batch_size",
+    "coevolution.lambda_ece",
+    "buffer.biomedical_categories",
+    "eval.ece_bins"
+  ],
   "data": {
     "questions": "data/mmlu_pro_hard_subset.json",
     "split_manifest": "data/splits/mmlu_pro_hard_split_manifest.csv",
     "split_manifest_sha256": "d06f8afb50f7fff4fb0f5dc0a7ca19c040d25dbe0fad3c8544d1fd6353129ed8"
   },
   "score": {
-    "weights": {"entropy": 0.45, "js": 0.35, "confidence": 0.15, "correctness": 0.05},
+    "weights": {
+      "entropy": 0.45,
+      "js": 0.35,
+      "confidence": 0.15,
+      "correctness": 0.05
+    },
     "hard_percentile": 80
   },
   "buffer": {
@@ -15,7 +28,10 @@
     "alpha_r": 0.5,
     "beta_d": 0.5,
     "gamma_c": 0.3,
-    "biomedical_categories": ["biology", "health"]
+    "biomedical_categories": [
+      "biology",
+      "health"
+    ]
   },
   "coevolution": {
     "iterations": 30,
@@ -23,12 +39,24 @@
     "steps_per_agent": 50,
     "slice_size": 64,
     "micro_batch_size": 4,
-    "learning_rate": 1e-5,
-    "tau_js": 0.30,
+    "learning_rate": 1e-05,
+    "tau_js": 0.3,
     "lambda_div": 1.0,
     "lambda_ece": 0.15
   },
-  "lora": {"r": 16, "alpha": 32, "dropout": 0.05},
-  "seeds": [42, 1337, 2024],
-  "eval": {"ece_bins": 10, "bootstrap_resamples": 1000, "permutations": 10000}
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05
+  },
+  "seeds": [
+    42,
+    1337,
+    2024
+  ],
+  "eval": {
+    "ece_bins": 10,
+    "bootstrap_resamples": 1000,
+    "permutations": 10000
+  }
 }
