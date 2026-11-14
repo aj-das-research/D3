@@ -58,11 +58,25 @@ scripts/download_qwen_model.py
 | Significance tests (App. G.8) | `analysis/saved_output_analysis.py` | Code, applied to the saved static outputs |
 | Co-evolution batches (Sec. 3.6) | `ddd/coevolution_loop.py` | Batch builder and update driver; adapter-update commands are supplied by the user |
 
-Not included in this release: trained LoRA adapters, per-iteration co-evolution outputs
+Not included in this release: per-iteration co-evolution outputs
 (Table 2, Figure 2, Tables 8-9), the validated-target and downstream-utility
 evaluations (Tables 4-5), the self-consistency and control sweeps
 (App. G.5-G.7), the exploratory design-space study (App. H), and the
 figure-plotting code.
+
+## Trained adapters
+
+The LoRA adapters used for the static runs are hosted on Kaggle:
+
+| Agent | Base model | Download |
+| --- | --- | --- |
+| Agent-R, SFT stage | Qwen2.5-3B-Instruct | [agent-r-sft-adapter](https://www.kaggle.com/datasets/ebadshabbir/agent-r-sft-adapter) |
+| Agent-R, after GRPO | Qwen2.5-3B-Instruct | [agent-r-v0-grpo-adapter-zip](https://www.kaggle.com/datasets/ebadshabbir/agent-r-v0-grpo-adapter-zip) |
+| Agent-D | Qwen2.5-3B-Instruct | [agent-d-result](https://www.kaggle.com/datasets/ebadshabbir/agent-d-result) (adapter in `agent_d_v0/`) |
+| Agent-C | Qwen2.5-3B-Instruct | [agent-c-result](https://www.kaggle.com/datasets/ebadshabbir/agent-c-result) (adapter and `temperature.json` in `agent_c_v0/`) |
+
+These are the same-family adapters. The Mistral-7B Agent-D adapter used for
+the different-family setting and the co-evolved adapters are not released.
 
 ## Setup
 
