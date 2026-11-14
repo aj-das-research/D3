@@ -229,17 +229,6 @@ Notes on provenance:
 More detail is in
 [`experiments/static_disagreement/outputs/README.md`](experiments/static_disagreement/outputs/README.md).
 
-## Citation
-
-```bibtex
-@inproceedings{shabbir2027disagreement,
-  title     = {Disagreement, Diversity, and Difficulty in Heterogeneous Multi-Agent Language Models},
-  author    = {Shabbir, Ebad and others},
-  booktitle = {Findings of the Association for Computational Linguistics: EACL 2027},
-  year      = {2027}
-}
-```
-
 ## License and acknowledgements
 
 Code is released under the [MIT License](LICENSE). The prepared question files
