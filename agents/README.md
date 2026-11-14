@@ -8,21 +8,27 @@ Model weights and adapter archives are not stored in this repository.
 
 ## Agent-R: reasoning specialist
 
+- `agent_r/train_agent_r_sft.py`: supervised fine-tuning with a LoRA adapter
+  on GSM8K worked solutions. Its output is the SFT adapter used below.
 - `agent_r/train_agent_r_grpo.py` and `agent_r/agent_r_grpo_training.ipynb`:
-  GRPO refinement of an existing Agent-R SFT adapter on GSM8K, with a reward
-  that combines answer-format validity and correctness.
+  GRPO refinement of the Agent-R SFT adapter on GSM8K, with a reward that
+  combines answer-format validity and correctness.
 - `agent_r/agent_r_ppo_baseline.ipynb`: the PPO variant compared against GRPO
   in Appendix D.3.
 
 Inputs are read from the environment:
 
 ```bash
-BASE_MODEL_PATH=/path/to/Qwen2.5-3B-Instruct \
-SFT_ADAPTER_PATH=/path/to/agent_r_sft \
-python agents/agent_r/train_agent_r_grpo.py
+# 1. SFT
+BASE_MODEL_PATH=/path/to/Qwen2.5-3B-Instruct OUTPUT_DIR=outputs/agent_r_sft \
+  python agents/agent_r/train_agent_r_sft.py
+
+# 2. GRPO on top of the SFT adapter
+BASE_MODEL_PATH=/path/to/Qwen2.5-3B-Instruct SFT_ADAPTER_PATH=outputs/agent_r_sft \
+  python agents/agent_r/train_agent_r_grpo.py
 ```
 
-The supervised fine-tuning stage that produces the SFT adapter is not included.
+The released SFT run used GSM8K only; Appendix D.1 lists GSM8K and MATH.
 
 ## Agent-D: domain specialist
 
