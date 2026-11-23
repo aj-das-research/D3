@@ -1,0 +1,4 @@
+{
+  "_comment": "Repro deviation M1: distributional component of D(q) = committee ensemble entropy instead of pairwise JS (selected on the validation split). Everything else as configs/paper.json.",
+  "score": {"distribution_term": "ensemble_entropy"}
+}

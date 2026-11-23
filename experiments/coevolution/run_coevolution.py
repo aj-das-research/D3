@@ -115,7 +115,7 @@ def main():
     if args.eval_test:
         test = load_split(config, "test")
         probs = {a: backend.predict(a, test) for a in backend.agents}
-        scored = score_questions(test, probs, config["score"]["weights"])
+        scored = score_questions(test, probs, config["score"]["weights"], config["score"].get("distribution_term", "js"))
         metrics = evaluate(scored, backend.agents, config["eval"]["ece_bins"], config["score"]["hard_percentile"])
         (out / "test_metrics.json").write_text(json.dumps(metrics, indent=2))
         with (out / "test_predictions.jsonl").open("w", encoding="utf-8") as f:

@@ -89,12 +89,28 @@ class ScoredQuestion:
     d_correctness: float
 
 
+def ensemble_entropy(dists: Sequence[np.ndarray]) -> float:
+    """Normalised entropy of the committee's mean option distribution (total predictive uncertainty)."""
+    m = np.mean(np.stack(dists), axis=0)
+    m = np.clip(m / max(m.sum(), EPS), EPS, 1.0)
+    return float(np.clip(-(m * np.log(m)).sum() / math.log(len(m)), 0.0, 1.0)) if len(m) > 1 else 0.0
+
+
 def score_questions(
     questions: List[Dict],
     probs_by_agent: Dict[str, List[np.ndarray]],
     weights: Dict[str, float],
+    distribution_term: str = "js",
 ) -> List[ScoredQuestion]:
-    """Composite D(q) (Eq. 7) and label-free D_LF (Eq. 8) for each question."""
+    """Composite D(q) (Eq. 7) and label-free D_LF (Eq. 8) for each question.
+
+    distribution_term selects the 0.35-weighted distributional component:
+      "js"               normalised mean pairwise Jensen-Shannon divergence (paper Eq. 5)
+      "ensemble_entropy" normalised entropy of the committee's mean distribution (repro deviation M1)
+    The pairwise JS value is always stored in d_js for reporting.
+    """
+    if distribution_term not in ("js", "ensemble_entropy"):
+        raise ValueError(f"unknown distribution_term {distribution_term!r}")
     agents = list(probs_by_agent)
     w = weights
     scorer = DisagreementScorer(
@@ -117,8 +133,9 @@ def score_questions(
         scorer.num_options = k
         res = scorer.score(q["question_id"], q.get("question", ""), outputs, correct_answer=q.get("answer"))
         ent, js, conf, corr = res.d_answer, res.d_distribution, res.d_confidence, res.d_correctness
-        lf = (w["entropy"] * ent + w["js"] * js + w["confidence"] * conf) / lf_total
-        full = (w["entropy"] * ent + w["js"] * js + w["confidence"] * conf + w["correctness"] * corr) / full_total
+        dist = js if distribution_term == "js" else ensemble_entropy([probs[a] for a in agents])
+        lf = (w["entropy"] * ent + w["js"] * dist + w["confidence"] * conf) / lf_total
+        full = (w["entropy"] * ent + w["js"] * dist + w["confidence"] * conf + w["correctness"] * corr) / full_total
         out.append(ScoredQuestion(q, probs, answers, confs, full, lf, ent, js, conf, corr))
     return out
 
@@ -265,9 +282,11 @@ def run_coevolution(
     log_path = output_dir / "iterations.jsonl"
     log_path.write_text("", encoding="utf-8")
 
+    dist_term = config["score"].get("distribution_term", "js")
+
     def score_split(questions):
         probs = {a: backend.predict(a, questions) for a in agents}
-        return score_questions(questions, probs, weights)
+        return score_questions(questions, probs, weights, dist_term)
 
     buffer = RollingBuffer(buf_cfg["max_size"], buf_cfg["exposed_top_k"])
     lambda_div = co["lambda_div"] if regularize else 0.0

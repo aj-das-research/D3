@@ -58,10 +58,11 @@ def main():
     p.add_argument("--agent", action="append", required=True, help="NAME=adapter_dir, in agent order (R, D, C)")
     p.add_argument("--agent_base", action="append", default=[], help="NAME=base_model override (different family)")
     p.add_argument("--bf16", action="store_true")
+    p.add_argument("--config", default=None, help="JSON config layered over configs/paper.json (e.g. configs/repro_m1.json)")
     p.add_argument("--out", required=True)
     a = p.parse_args()
 
-    config = load_config(None, {})
+    config = load_config(a.config, {})
     overrides = dict(x.split("=", 1) for x in a.agent_base)
     specs = parse_agents(a.agent, a.base_model, overrides)
     out = Path(a.out)
@@ -86,7 +87,7 @@ def main():
     weights = config["score"]["weights"]
     pct = config["score"]["hard_percentile"]
     bins = config["eval"]["ece_bins"]
-    all_scored = score_questions(questions, probs, weights)
+    all_scored = score_questions(questions, probs, weights, config["score"].get("distribution_term", "js"))
     with (out / f"{a.split}_predictions_all.jsonl").open("w") as f:
         for row in predictions_table(all_scored, backend.agents):
             f.write(json.dumps(row) + "\n")

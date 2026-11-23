@@ -101,6 +101,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max_medqa_rows", type=int, default=0)
     parser.add_argument("--max_pubmedqa_rows", type=int, default=0)
     parser.add_argument("--skip_phase1", action="store_true")
+    parser.add_argument("--phase1_adapter", default=None,
+                        help="Resume from a finished Phase-1 (PubMed DAPT) LoRA adapter and run Phase 2 only.")
 
     parser.add_argument("--phase1_epochs", type=float, default=1.0)
     parser.add_argument("--phase2_epochs", type=float, default=2.0)
@@ -507,11 +509,16 @@ def main() -> None:
         bias="none",
         task_type="CAUSAL_LM",
     )
-    model = get_peft_model(model, lora)
+    if ARGS.phase1_adapter:
+        from peft import PeftModel
+        log(f"Loading finished Phase-1 adapter from {ARGS.phase1_adapter}; Phase 1 is not re-run")
+        model = PeftModel.from_pretrained(model, ARGS.phase1_adapter, is_trainable=True)
+    else:
+        model = get_peft_model(model, lora)
     if IS_MAIN:
         model.print_trainable_parameters()
 
-    if not ARGS.skip_phase1:
+    if not ARGS.skip_phase1 and not ARGS.phase1_adapter:
         phase1_dataset = load_pubmed_dataset(tokenizer)
         args1 = make_training_args(
             str(phase1_dir),
