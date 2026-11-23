@@ -58,3 +58,9 @@ checkpoints/
 
 # Overleaf paper clone (separate git repo, synced to Overleaf directly)
 /overleaf/
+
+# Official third-party baseline code (MUSE, EIP), cloned locally
+/external/
+
+# Official third-party baseline code (MUSE, EIP), cloned locally, not run yet
+/external/
