@@ -1,1 +1,31 @@
 id,value,std,n_seeds,run_tag,command,output_path,date,deviation_id,notes
+T1.same50.rho,0.1539,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/rescored_summary.csv,2026-11-23T07:32:45,,released-output_single-run
+T1.same50.meanD,0.4171,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/rescored_summary.csv,2026-11-23T07:32:45,,released-output_single-run
+T1.same50.hard,0.2,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/rescored_summary.csv,2026-11-23T07:32:46,,released-output_single-run
+T1.diff50.rho,-0.0081,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/rescored_summary.csv,2026-11-23T07:32:46,,released-output_single-run
+T1.diff50.meanD,0.4781,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/rescored_summary.csv,2026-11-23T07:32:46,,released-output_single-run
+T1.diff50.hard,0.2,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/rescored_summary.csv,2026-11-23T07:32:47,,released-output_single-run
+T1.diff300.rho,0.0029,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/rescored_summary.csv,2026-11-23T07:32:47,,released-output_single-run
+T1.diff300.meanD,0.475,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/rescored_summary.csv,2026-11-23T07:32:47,,released-output_single-run
+T1.diff300.hard,0.2033,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/rescored_summary.csv,2026-11-23T07:32:48,,released-output_single-run
+T2.accR.it0,0.2533,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/orthogonality_summary.csv,2026-11-23T07:32:48,,released-output_single-run
+T2.accD.it0,0.2267,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/orthogonality_summary.csv,2026-11-23T07:32:48,,released-output_single-run
+T2.accC.it0,0.4733,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/orthogonality_summary.csv,2026-11-23T07:32:49,,released-output_single-run
+T2.eceR.it0,0.3476,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/orthogonality_summary.csv,2026-11-23T07:32:49,,released-output_single-run
+T2.jsreg.it0,0.3173,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/orthogonality_summary.csv,2026-11-23T07:32:49,,released-output_single-run
+T2.rho.it0,0.0029,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/rescored_summary.csv,2026-11-23T07:32:50,,released-output_single-run
+A.agent.accR,0.2533,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/orthogonality_summary.csv,2026-11-23T07:32:50,,released-output_single-run
+A.agent.accD,0.2267,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/orthogonality_summary.csv,2026-11-23T07:32:51,,released-output_single-run
+A.agent.accC,0.4733,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/orthogonality_summary.csv,2026-11-23T07:32:51,,released-output_single-run
+A.agent.eceR,0.3476,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/orthogonality_summary.csv,2026-11-23T07:32:51,,released-output_single-run
+A.agent.eceC,0.0518,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/orthogonality_summary.csv,2026-11-23T07:32:52,,released-output_single-run
+A.agent.jacRD,0.6403,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/orthogonality_summary.csv,2026-11-23T07:32:52,,released-output_single-run
+A.agent.uniqR,15.0,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/orthogonality_summary.csv,2026-11-23T07:32:52,,released-output_single-run
+A.agent.uniqD,24.0,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/orthogonality_summary.csv,2026-11-23T07:32:53,,released-output_single-run
+A.agent.uniqC,61.0,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/orthogonality_summary.csv,2026-11-23T07:32:53,,released-output_single-run
+T11.q11840.D,0.8315,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/orthogonality_records.csv,2026-11-23T07:32:53,,released-output_single-run
+T11.q12235.D,0.7806,nan,1,rescore_released,node analysis/error_structure.js,results/error_structure/orthogonality_records.csv,2026-11-23T07:32:54,,released-output_single-run
+A.sig.same50,0.28447155284471554,nan,1,rescore_released,python analysis/saved_output_analysis.py,results/saved_output_analysis/component_ablation.csv,2026-11-23T07:32:54,,released-output_single-run
+T1.random.rho,-0.009848546903548734,0.026521835583957327,3,static_random_onehot,python repro/random_control.py --mode onehot --out $D3_OUT/static/random_control,/mnt/hdd2/Abhijit/projects/D3/outputs/static/random_control/onehot/seed*/metrics.json,2026-11-23T07:35:19,I1,
+T1.random.meanD,0.729694888888889,0.011996441267544683,3,static_random_onehot,python repro/random_control.py --mode onehot --out $D3_OUT/static/random_control,/mnt/hdd2/Abhijit/projects/D3/outputs/static/random_control/onehot/seed*/metrics.json,2026-11-23T07:35:19,I1,
+T1.random.hard,0.21555555555555558,0.015030832509409647,3,static_random_onehot,python repro/random_control.py --mode onehot --out $D3_OUT/static/random_control,/mnt/hdd2/Abhijit/projects/D3/outputs/static/random_control/onehot/seed*/metrics.json,2026-11-23T07:35:19,I1,
