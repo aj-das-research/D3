@@ -37,6 +37,7 @@ Expected output:
 import argparse
 import glob
 import importlib
+import importlib.util
 import inspect
 import json
 import os

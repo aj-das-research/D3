@@ -129,7 +129,7 @@ def main() -> None:
            "deviation_id": a.deviation_id, "notes": a.notes}
     path = HERE / "results.csv"
     with path.open("a", newline="") as f:
-        csv.DictWriter(f, fieldnames=COLUMNS).writerow(row)
+        csv.DictWriter(f, fieldnames=COLUMNS, lineterminator="\n").writerow(row)
     print(f"[record] {a.id} = {value:.4f}" + (f" +/- {std:.4f} (n={n_seeds})" if np.isfinite(std) else ""))
 
 

@@ -127,7 +127,7 @@ class HFAgentBackend:
         prompts = [build_prompt(tok, agent, q["question"], q["options"]) for q in questions]
         enc = tok(prompts, return_tensors="pt", padding=True, truncation=True,
                   max_length=self.max_length).to(model.device)
-        logits = model(**enc).logits[:, -1, :]
+        logits = model(**enc, logits_to_keep=1).logits[:, -1, :]  # last position only (same values, far less memory)
         k = max(len(q["options"]) for q in questions)
         ids = letter_token_ids(tok, k)
         choice = logits[:, ids].float()
