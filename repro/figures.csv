@@ -1,0 +1,15 @@
+fig_id,paper_file,paper_ref,description,repro_command,repro_output,status,notes
+F_arch,figures/fig_architecture.pdf,Fig. 1 (main),Three-agent framework diagram,,,Pending,schematic; redraw from method
+F_coevo,figures/fig6_coevolution_4panel.pdf,Fig. 2 (main),Co-evolution dynamics: accuracy / rho / Agent-R ECE / JS over 30 iterations,,,Pending,needs co-evolution runs
+F_peragent,figures/fig3_per_agent_metrics.pdf,Fig. 3 (main),Per-agent accuracy / ECE / unique-correct,,,Pending,
+F_diag,figures/fig4_diagnostic_overview.pdf,Fig. 4 (main),Error Jaccard / diagnostic metrics / high-disagreement examples,,,Pending,
+F_cross,figures/fig2_cross_setting.pdf,Fig. 5 (main),Cross-setting rho and mean D,,,Pending,
+F_applications,main.tex tikz,Fig. 6 (main),Deployment view (TikZ inline in paper),,,Done,inline TikZ in main.tex; no data
+F_weights,figures/fig1_score_design.pdf,Fig. 7 (app.),Component weights and adaptive vs fixed threshold,,,Pending,
+F_theory,figures/fig9_theory_phase.pdf,Fig. 8 (app.),Accuracy-JS trajectory with/without reg; feasible region,,,Pending,needs co-evolution runs
+F_lr,figures/fig5_training_setup.pdf,Fig. 9 (app.),Learning rates per phase; homogeneous 70B per-agent accuracy,,,Pending,
+F_scaling,figures/fig8_scaling_analysis.pdf,Fig. 10 (app.),Scaling and sensitivity (scale / tau_JS / hard rate),,,Pending,
+F_heatmap,figures/fig7_cross_benchmark_heatmap.pdf,Fig. 11 (app.),Design-space heatmap across benchmarks and backbones,,,Pending,exploratory; not in release
+F_bench,figures/fig11_benchmark_comparison.pdf,Fig. 12 (app.),Design-space method comparison and win rates,,,Pending,exploratory; not in release
+F_validated,figures/generated/figA_validated_targets.pdf,Fig. 13 (app.),Spearman vs validated targets per method,,,Pending,
+F_triage,figures/generated/figB_triage_sweep.pdf,Fig. 14 (app.),Triage ranking preservation vs budget,,,Pending,

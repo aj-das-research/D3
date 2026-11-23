@@ -1,0 +1,184 @@
+id,paper_item,row,metric,paper_mean,paper_std,direction,notes
+T1.random.rho,Table 1 (static),Random control n=300,Spearman rho(D;s),0.001,0.041,match,control
+T1.random.meanD,Table 1 (static),Random control n=300,Mean D,0.732,0.018,match,control
+T1.random.hard,Table 1 (static),Random control n=300,Hard rate,0.200,0.000,match,control
+T1.homog70b.rho,Table 1 (static),Homog. 70B n=30,Spearman rho(D;s),-0.028,0.041,match,control (Llama-3.3-70B role prompts)
+T1.same50.rho,Table 1 (static),Same-family n=50,Spearman rho(D;s),0.154,0.022,higher,
+T1.same50.meanD,Table 1 (static),Same-family n=50,Mean D,0.417,0.011,match,
+T1.same50.hard,Table 1 (static),Same-family n=50,Hard rate,0.200,0.008,match,
+T1.diff50.rho,Table 1 (static),Diff-family n=50,Spearman rho(D;s),-0.008,0.038,match,paper claim: near zero
+T1.diff50.meanD,Table 1 (static),Diff-family n=50,Mean D,0.478,0.014,match,
+T1.diff50.hard,Table 1 (static),Diff-family n=50,Hard rate,0.200,0.012,match,
+T1.diff300.rho,Table 1 (static),Diff-family n=300,Spearman rho(D;s),0.003,0.019,match,paper claim: near zero
+T1.diff300.meanD,Table 1 (static),Diff-family n=300,Mean D,0.475,0.009,match,
+T1.diff300.hard,Table 1 (static),Diff-family n=300,Hard rate,0.203,0.005,match,
+T2.accR.it0,Table 2 (co-evolution),Agent-R accuracy,Iter 0,0.253,0.021,higher,
+T2.accR.it30,Table 2 (co-evolution),Agent-R accuracy,Iter 30,0.340,0.019,higher,
+T2.accD.it0,Table 2 (co-evolution),Agent-D accuracy,Iter 0,0.227,0.020,higher,
+T2.accD.it30,Table 2 (co-evolution),Agent-D accuracy,Iter 30,0.310,0.018,higher,
+T2.accC.it0,Table 2 (co-evolution),Agent-C accuracy,Iter 0,0.473,0.018,higher,
+T2.accC.it30,Table 2 (co-evolution),Agent-C accuracy,Iter 30,0.530,0.016,higher,
+T2.rho.it0,Table 2 (co-evolution),Spearman rho(D;s),Iter 0,0.003,0.019,match,
+T2.rho.it30,Table 2 (co-evolution),Spearman rho(D;s),Iter 30,0.200,0.018,higher,
+T2.eceR.it0,Table 2 (co-evolution),Agent-R ECE,Iter 0,0.348,0.014,match,
+T2.eceR.it30,Table 2 (co-evolution),Agent-R ECE,Iter 30,0.180,0.011,lower,
+T2.jsreg.it0,Table 2 (co-evolution),Mean JS (with reg.),Iter 0,0.317,0.009,match,
+T2.jsreg.it30,Table 2 (co-evolution),Mean JS (with reg.),Iter 30,0.320,0.008,higher,regulariser holds diversity
+T2.jsnoreg.it30,Table 2 (co-evolution),Mean JS (no reg.),Iter 30,0.180,0.013,match,collapse without regulariser
+T3.corr,Table 3 (components),Correctness only,Spearman rho(D;s),0.041,0.034,match,
+T3.conf,Table 3 (components),Confidence only,Spearman rho(D;s),0.082,0.031,match,
+T3.ent,Table 3 (components),Entropy only,Spearman rho(D;s),0.156,0.026,higher,
+T3.js,Table 3 (components),JS only,Spearman rho(D;s),0.165,0.024,higher,
+T3.entjs,Table 3 (components),Entropy + JS,Spearman rho(D;s),0.187,0.020,higher,
+T3.dlf,Table 3 (components),Label-free D_LF,Spearman rho(D;s),0.193,0.019,higher,
+T3.full,Table 3 (components),Full composite D,Spearman rho(D;s),0.200,0.018,higher,
+T3.jsheavy,Table 3 (components),JS-heavy weighting,Spearman rho(D;s),0.203,0.020,higher,
+T4.verbconf.pass,Table 4 (validated targets),Verbalized confidence,rho vs 1-pass rate,0.218,0.044,match,baseline
+T4.verbconf.irt,Table 4 (validated targets),Verbalized confidence,rho vs IRT-b,0.192,0.046,match,baseline
+T4.debate.pass,Table 4 (validated targets),Homogeneous debate,rho vs 1-pass rate,0.249,0.041,match,baseline
+T4.debate.irt,Table 4 (validated targets),Homogeneous debate,rho vs IRT-b,0.221,0.043,match,baseline
+T4.entropy.pass,Table 4 (validated targets),Single-model entropy,rho vs 1-pass rate,0.286,0.041,match,baseline
+T4.entropy.irt,Table 4 (validated targets),Single-model entropy,rho vs IRT-b,0.254,0.043,match,baseline
+T4.sc20.pass,Table 4 (validated targets),Self-consistency (20),rho vs 1-pass rate,0.312,0.038,match,baseline
+T4.sc20.irt,Table 4 (validated targets),Self-consistency (20),rho vs IRT-b,0.281,0.040,match,baseline
+T4.ens3.pass,Table 4 (validated targets),Untrained 3-family ensemble,rho vs 1-pass rate,0.329,0.034,match,baseline
+T4.ens3.irt,Table 4 (validated targets),Untrained 3-family ensemble,rho vs IRT-b,0.298,0.036,match,baseline
+T4.muse.pass,Table 4 (validated targets),MUSE,rho vs 1-pass rate,0.381,0.032,match,baseline
+T4.muse.irt,Table 4 (validated targets),MUSE,rho vs IRT-b,0.349,0.034,match,baseline
+T4.dlfpre.pass,Table 4 (validated targets),D_LF pre-co-evolution,rho vs 1-pass rate,0.321,0.030,higher,
+T4.dlfpre.irt,Table 4 (validated targets),D_LF pre-co-evolution,rho vs IRT-b,0.293,0.032,higher,
+T4.dlfco.pass,Table 4 (validated targets),D_LF co-evolved,rho vs 1-pass rate,0.446,0.026,higher,
+T4.dlfco.irt,Table 4 (validated targets),D_LF co-evolved,rho vs IRT-b,0.412,0.028,higher,
+T4.eip.pass,Table 4 (validated targets),EIP (pool-informed),rho vs 1-pass rate,0.824,0.020,match,reference
+T4.eip.irt,Table 4 (validated targets),EIP (pool-informed),rho vs IRT-b,0.871,0.018,match,reference
+T5.random.triage,Table 5 (utility),Random,Triage rho_rank,0.741,0.074,match,baseline
+T5.random.sel,Table 5 (utility),Random,Selective acc@0.8,0.552,0.012,match,baseline
+T5.random.alloc,Table 5 (utility),Random,Allocation dacc,0.006,0.004,match,baseline
+T5.qlen.triage,Table 5 (utility),Question length,Triage rho_rank,0.790,0.045,match,baseline
+T5.qlen.sel,Table 5 (utility),Question length,Selective acc@0.8,0.571,0.010,match,baseline
+T5.qlen.alloc,Table 5 (utility),Question length,Allocation dacc,0.009,0.004,match,baseline
+T5.entropy.triage,Table 5 (utility),Single-model entropy,Triage rho_rank,0.853,0.033,match,baseline
+T5.entropy.sel,Table 5 (utility),Single-model entropy,Selective acc@0.8,0.598,0.011,match,baseline
+T5.entropy.alloc,Table 5 (utility),Single-model entropy,Allocation dacc,0.015,0.005,match,baseline
+T5.commconf.triage,Table 5 (utility),Committee confidence,Triage rho_rank,0.874,0.030,match,baseline
+T5.commconf.sel,Table 5 (utility),Committee confidence,Selective acc@0.8,0.619,0.010,match,baseline
+T5.commconf.alloc,Table 5 (utility),Committee confidence,Allocation dacc,0.017,0.004,match,baseline
+T5.sq.triage,Table 5 (utility),Structural proxy s(q),Triage rho_rank,0.825,0.040,match,baseline
+T5.sq.sel,Table 5 (utility),Structural proxy s(q),Selective acc@0.8,0.584,0.010,match,baseline
+T5.sq.alloc,Table 5 (utility),Structural proxy s(q),Allocation dacc,0.012,0.004,match,baseline
+T5.dlfpre.triage,Table 5 (utility),D_LF pre-co-evolution,Triage rho_rank,0.888,0.025,higher,
+T5.dlfpre.sel,Table 5 (utility),D_LF pre-co-evolution,Selective acc@0.8,0.624,0.009,higher,
+T5.dlfpre.alloc,Table 5 (utility),D_LF pre-co-evolution,Allocation dacc,0.022,0.004,higher,
+T5.dlfco.triage,Table 5 (utility),D_LF co-evolved,Triage rho_rank,0.930,0.019,higher,
+T5.dlfco.sel,Table 5 (utility),D_LF co-evolved,Selective acc@0.8,0.651,0.008,higher,
+T5.dlfco.alloc,Table 5 (utility),D_LF co-evolved,Allocation dacc,0.031,0.005,higher,
+T5.uniform.alloc,Table 5 (utility),Uniform allocation,Allocation dacc,0.011,0.004,match,baseline
+T7.ppo.val,Table 7 (PPO vs GRPO),PPO,Agent-R val accuracy,0.30,0.025,match,baseline
+T7.grpo.val,Table 7 (PPO vs GRPO),GRPO,Agent-R val accuracy,0.34,0.018,higher,
+T8.reg.js,Table 8 (regulariser),With regulariser,Final mean JS,0.320,0.008,higher,
+T8.reg.rho,Table 8 (regulariser),With regulariser,rho(D;s),0.200,0.018,higher,
+T8.noreg.js,Table 8 (regulariser),Without regulariser,Final mean JS,0.180,0.013,match,
+T8.noreg.rho,Table 8 (regulariser),Without regulariser,rho(D;s),0.090,0.024,match,
+A.scoreform.hard,App. G.3 (score form),Binary vote disagreement,Hard rate,0.910,0.014,match,
+A.scoreform.rho,App. G.3 (score form),Binary vote disagreement,rho(D;s),0.001,0.022,match,
+T9.full,Table 9 (agent subsets),Full system (R;D;C),rho at endpoint,0.200,0.018,higher,
+T9.noR,Table 9 (agent subsets),Without Agent-R,rho at endpoint,0.158,,match,single seed in paper
+T9.noD,Table 9 (agent subsets),Without Agent-D,rho at endpoint,0.142,,match,single seed in paper
+T9.noC,Table 9 (agent subsets),Without Agent-C,rho at endpoint,0.087,0.030,match,
+T9.csc20,Table 9 (agent subsets),Agent-C + self-consistency 20,rho at endpoint,0.071,0.030,match,
+A.sc.sat,App. G.5 (SC sweep),Self-consistency 5-100 samples,max rho(D;s),0.07,,match,saturates near 0.07
+A.scale.qwen7bD,App. G.6 (scale controls),Qwen2.5-7B as Agent-D,rho(D;s),0.118,0.024,match,
+A.scale.largesame,App. G.6 (scale controls),Larger same-family,rho(D;s),0.183,,higher,
+A.scale.3fam,App. G.6 (scale controls),Three-family (Llama-8B/Mistral-7B/Qwen-3B),rho(D;s),0.041,0.029,match,
+A.buffer.argmax,App. G.7 (buffer/threshold),Threshold sweep,argmax percentile,80,,match,max at 80th percentile
+A.sig.coevo,App. G.8 (significance),Co-evolution endpoint,permutation p,0.001,,lower,
+A.sig.same50,App. G.8 (significance),Static same-family n=50,permutation p,0.140,,match,
+A.agent.accC,App. G.1 (per-agent),Agent-C,accuracy,0.473,0.018,higher,
+A.agent.accR,App. G.1 (per-agent),Agent-R,accuracy,0.253,0.021,higher,
+A.agent.accD,App. G.1 (per-agent),Agent-D,accuracy,0.227,0.020,higher,
+A.agent.eceC,App. G.1 (per-agent),Agent-C,ECE,0.052,0.008,lower,
+A.agent.eceR,App. G.1 (per-agent),Agent-R,ECE,0.348,0.014,match,
+A.agent.jacRD,App. G.1 (per-agent),R-D pair,error Jaccard,0.640,0.012,match,
+A.agent.uniqC,App. G.1 (per-agent),Agent-C,unique-correct count,61,,match,
+A.agent.uniqD,App. G.1 (per-agent),Agent-D,unique-correct count,24,,match,
+A.agent.uniqR,App. G.1 (per-agent),Agent-R,unique-correct count,15,,match,
+T10.math.meanD,Table 10 (per-category),mathematics,Mean D,0.49,,match,
+T10.math.hard,Table 10 (per-category),mathematics,Hard rate,0.24,,match,
+T10.math.accC,Table 10 (per-category),mathematics,Agent-C acc,0.42,,higher,
+T10.physics.meanD,Table 10 (per-category),physics,Mean D,0.48,,match,
+T10.physics.hard,Table 10 (per-category),physics,Hard rate,0.22,,match,
+T10.physics.accC,Table 10 (per-category),physics,Agent-C acc,0.41,,higher,
+T10.chemistry.meanD,Table 10 (per-category),chemistry,Mean D,0.47,,match,
+T10.chemistry.hard,Table 10 (per-category),chemistry,Hard rate,0.20,,match,
+T10.chemistry.accC,Table 10 (per-category),chemistry,Agent-C acc,0.45,,higher,
+T10.biology.meanD,Table 10 (per-category),biology,Mean D,0.45,,match,
+T10.biology.hard,Table 10 (per-category),biology,Hard rate,0.18,,match,
+T10.biology.accC,Table 10 (per-category),biology,Agent-C acc,0.51,,higher,
+T10.law.meanD,Table 10 (per-category),law,Mean D,0.49,,match,
+T10.law.hard,Table 10 (per-category),law,Hard rate,0.21,,match,
+T10.law.accC,Table 10 (per-category),law,Agent-C acc,0.39,,higher,
+T10.health.meanD,Table 10 (per-category),health,Mean D,0.46,,match,
+T10.health.hard,Table 10 (per-category),health,Hard rate,0.19,,match,
+T10.health.accC,Table 10 (per-category),health,Agent-C acc,0.55,,higher,
+T10.psychology.meanD,Table 10 (per-category),psychology,Mean D,0.44,,match,
+T10.psychology.hard,Table 10 (per-category),psychology,Hard rate,0.17,,match,
+T10.psychology.accC,Table 10 (per-category),psychology,Agent-C acc,0.57,,higher,
+T10.cs.meanD,Table 10 (per-category),computer science,Mean D,0.46,,match,
+T10.cs.hard,Table 10 (per-category),computer science,Hard rate,0.20,,match,
+T10.cs.accC,Table 10 (per-category),computer science,Agent-C acc,0.49,,higher,
+A.percat.psych.rho,App. G.9 (per-category),psychology (co-evolved),rho(D;s),0.13,,higher,
+A.percat.math.rho,App. G.9 (per-category),mathematics (co-evolved),rho(D;s),0.27,,higher,
+A.latency.sys,App. G.10 (latency),Three-agent system,seconds/question,3.1,,lower,
+A.latency.single,App. G.10 (latency),Single agent,seconds/question,1.0,,lower,
+A.latency.sc20,App. G.10 (latency),Self-consistency 20,seconds/question,20.4,,match,
+T11.q11840.D,Table 11 (qualitative),Q 11840 (gold I; R=B D=A C=I),D(q),0.832,,match,
+T11.q12235.D,Table 11 (qualitative),Q 12235 (gold E; R=B D=J C=E),D(q),0.781,,match,
+T12.random.10,Table 12 (triage sweep),Random,10%,0.608,0.100,match,baseline
+T12.random.20,Table 12 (triage sweep),Random,20%,0.741,0.074,match,baseline
+T12.random.40,Table 12 (triage sweep),Random,40%,0.881,0.037,match,baseline
+T12.qlen.10,Table 12 (triage sweep),Question length,10%,0.685,0.071,match,baseline
+T12.qlen.20,Table 12 (triage sweep),Question length,20%,0.790,0.045,match,baseline
+T12.qlen.40,Table 12 (triage sweep),Question length,40%,0.909,0.026,match,baseline
+T12.entropy.10,Table 12 (triage sweep),Single-model entropy,10%,0.755,0.060,match,baseline
+T12.entropy.20,Table 12 (triage sweep),Single-model entropy,20%,0.853,0.033,match,baseline
+T12.entropy.40,Table 12 (triage sweep),Single-model entropy,40%,0.930,0.020,match,baseline
+T12.commconf.10,Table 12 (triage sweep),Committee confidence,10%,0.776,0.052,match,baseline
+T12.commconf.20,Table 12 (triage sweep),Committee confidence,20%,0.874,0.030,match,baseline
+T12.commconf.40,Table 12 (triage sweep),Committee confidence,40%,0.944,0.017,match,baseline
+T12.sq.10,Table 12 (triage sweep),Structural proxy s(q),10%,0.720,0.065,match,baseline
+T12.sq.20,Table 12 (triage sweep),Structural proxy s(q),20%,0.825,0.040,match,baseline
+T12.sq.40,Table 12 (triage sweep),Structural proxy s(q),40%,0.916,0.023,match,baseline
+T12.dlfpre.10,Table 12 (triage sweep),D_LF pre-co-evolution,10%,0.804,0.047,higher,
+T12.dlfpre.20,Table 12 (triage sweep),D_LF pre-co-evolution,20%,0.888,0.025,higher,
+T12.dlfpre.40,Table 12 (triage sweep),D_LF pre-co-evolution,40%,0.951,0.014,higher,
+T12.dlfco.10,Table 12 (triage sweep),D_LF co-evolved,10%,0.874,0.035,higher,
+T12.dlfco.20,Table 12 (triage sweep),D_LF co-evolved,20%,0.930,0.019,higher,
+T12.dlfco.40,Table 12 (triage sweep),D_LF co-evolved,40%,0.972,0.010,higher,
+T13.homog.mmlupro,Table 13 (design space),Homogeneous,MMLU-Pro,0.01,0.03,match,exploratory; not in release
+T13.homog.gpqa,Table 13 (design space),Homogeneous,GPQA,0.02,0.03,match,exploratory
+T13.homog.math,Table 13 (design space),Homogeneous,MATH,-0.01,0.03,match,exploratory
+T13.homog.medqa,Table 13 (design space),Homogeneous,MedQA,0.02,0.03,match,exploratory
+T13.homog.arc,Table 13 (design space),Homogeneous,ARC-C,0.01,0.03,match,exploratory
+T13.homog.bbh,Table 13 (design space),Homogeneous,BBH,0.02,0.03,match,exploratory
+T13.homog.tqa,Table 13 (design space),Homogeneous,TruthfulQA,0.01,0.03,match,exploratory
+T13.same.mmlupro,Table 13 (design space),Hetero same-family,MMLU-Pro,0.15,0.02,higher,exploratory
+T13.same.gpqa,Table 13 (design space),Hetero same-family,GPQA,0.18,0.02,higher,exploratory
+T13.same.math,Table 13 (design space),Hetero same-family,MATH,0.17,0.02,higher,exploratory
+T13.same.medqa,Table 13 (design space),Hetero same-family,MedQA,0.15,0.02,higher,exploratory
+T13.same.arc,Table 13 (design space),Hetero same-family,ARC-C,0.13,0.02,higher,exploratory
+T13.same.bbh,Table 13 (design space),Hetero same-family,BBH,0.16,0.02,higher,exploratory
+T13.same.tqa,Table 13 (design space),Hetero same-family,TruthfulQA,0.13,0.02,higher,exploratory
+T13.diff.mmlupro,Table 13 (design space),Hetero diff-family,MMLU-Pro,0.10,0.02,match,exploratory
+T13.diff.gpqa,Table 13 (design space),Hetero diff-family,GPQA,0.13,0.02,match,exploratory
+T13.diff.math,Table 13 (design space),Hetero diff-family,MATH,0.12,0.02,match,exploratory
+T13.diff.medqa,Table 13 (design space),Hetero diff-family,MedQA,0.09,0.02,match,exploratory
+T13.diff.arc,Table 13 (design space),Hetero diff-family,ARC-C,0.08,0.02,match,exploratory
+T13.diff.bbh,Table 13 (design space),Hetero diff-family,BBH,0.11,0.02,match,exploratory
+T13.diff.tqa,Table 13 (design space),Hetero diff-family,TruthfulQA,0.07,0.02,match,exploratory
+T13.coevo.mmlupro,Table 13 (design space),With co-evolution,MMLU-Pro,0.20,0.02,higher,exploratory
+T13.coevo.gpqa,Table 13 (design space),With co-evolution,GPQA,0.24,0.02,higher,exploratory
+T13.coevo.math,Table 13 (design space),With co-evolution,MATH,0.22,0.02,higher,exploratory
+T13.coevo.medqa,Table 13 (design space),With co-evolution,MedQA,0.19,0.02,higher,exploratory
+T13.coevo.arc,Table 13 (design space),With co-evolution,ARC-C,0.18,0.02,higher,exploratory
+T13.coevo.bbh,Table 13 (design space),With co-evolution,BBH,0.22,0.02,higher,exploratory
+T13.coevo.tqa,Table 13 (design space),With co-evolution,TruthfulQA,0.17,0.02,higher,exploratory

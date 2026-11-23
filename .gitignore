@@ -55,3 +55,6 @@ checkpoints/
 
 # Local scoring of saved outputs against the public pool
 /results/validated_targets/
+
+# Overleaf paper clone (separate git repo, synced to Overleaf directly)
+/overleaf/
